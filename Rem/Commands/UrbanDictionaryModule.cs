@@ -10,29 +10,30 @@ using RestSharp.Deserializers;
 
 namespace Rem.Commands
 {
-    class UdDefinition
-    {
-        [DeserializeAs(Name="defid")]
-        public int Id { get; set; }
-        public string Word { get; set; }
-        public string Author { get; set; }
-        public string Permalink { get; set; }
-        public string Definition { get; set; }
-        public string Example { get; set; }
-        public int ThumbsUp { get; set; }
-        public int ThumbsDown { get; set; }
-    }
-
-    class UdApiResponse
-    {
-        public List<string> Tags { get; set; }
-        public string ResultType { get; set; }
-        public List<UdDefinition> List { get; set; }
-        public List<string> Sounds { get; set; }
-    }
 
     public class UrbanDictionaryModule : ModuleBase
     {
+        internal class UdDefinition
+        {
+            [DeserializeAs(Name = "defid")]
+            public int Id { get; set; }
+            public string Word { get; set; }
+            public string Author { get; set; }
+            public string Permalink { get; set; }
+            public string Definition { get; set; }
+            public string Example { get; set; }
+            public int ThumbsUp { get; set; }
+            public int ThumbsDown { get; set; }
+        }
+
+        internal class UdApiResponse
+        {
+            public List<string> Tags { get; set; }
+            public string ResultType { get; set; }
+            public List<UdDefinition> List { get; set; }
+            public List<string> Sounds { get; set; }
+        }
+
         private readonly RestClient _client;
         public UrbanDictionaryModule()
         {

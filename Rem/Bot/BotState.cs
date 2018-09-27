@@ -20,6 +20,7 @@ namespace Rem.Bot
         public int PatCount { get; set; }
         public int BribeCount { get; set; }
         public HashSet<ulong> AdminList { get; set; }
+        public string TranslatorApiKey { get; set; }
 
         [JsonIgnore]
         public string FilePath { get; private set; }
@@ -58,6 +59,7 @@ namespace Rem.Bot
             Prefix = newState.Prefix;
             PatCount = newState.PatCount;
             BribeCount = newState.BribeCount;
+            TranslatorApiKey = newState.TranslatorApiKey;
         }
 
         public async Task PersistState()
