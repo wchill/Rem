@@ -46,7 +46,7 @@ namespace Rem.Commands
         }
 
         [Command("translate"), Summary("Translate text into another language")]
-        [Alias("ud")]
+        [Alias("tl")]
         public async Task TranslateText([Summary("Text to translate")][Remainder] string text)
         {
             TranslationResponse translationResp;
@@ -72,7 +72,6 @@ namespace Rem.Commands
         }
 
         [Command("translatelanguages"), Summary("List all supported translation langauges")]
-        [Alias("tl")]
         public async Task ListSupportedLanguages()
         {
             var languages = await GetSupportedLanguages();

@@ -7,7 +7,7 @@ namespace Rem.Models
 {
     public enum ImageType
     {
-        Headpat,
+        Pat,
         Hug,
         Cuddle
     }
@@ -18,14 +18,8 @@ namespace Rem.Models
         {
             switch (t)
             {
-                case ImageType.Headpat:
-                    return "pat";
-                case ImageType.Hug:
-                    return "hug";
-                case ImageType.Cuddle:
-                    return "cuddle";
                 default:
-                    return t.ToString();
+                    return t.ToString().ToLower();
             }
         }
     }

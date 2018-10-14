@@ -17,40 +17,100 @@
     <None Remove="Images\8.png" />
     <None Remove="Images\9.png" />
     <None Remove="Images\heatingup.png" />
+    <None Remove="Images\MemeTemplates\AlarmClock.png" />
+    <None Remove="Images\MemeTemplates\Coma.jpg" />
+    <None Remove="Images\MemeTemplates\CrystalOfTruth.png" />
+    <None Remove="Images\MemeTemplates\DailyStruggle.png" />
+    <None Remove="Images\MemeTemplates\Disappointment.png" />
+    <None Remove="Images\MemeTemplates\DistractedBoyfriend.jpg" />
+    <None Remove="Images\MemeTemplates\DogBite.png" />
+    <None Remove="Images\MemeTemplates\GruPlan.png" />
+    <None Remove="Images\MemeTemplates\KaibasDefeat.png" />
+    <None Remove="Images\MemeTemplates\KomiPaper.png" />
+    <None Remove="Images\MemeTemplates\LightBulb.png" />
+    <None Remove="Images\MemeTemplates\Pigeon.jpg" />
+    <None Remove="Images\MemeTemplates\Pills.jpg" />
+    <None Remove="Images\MemeTemplates\ScrollOfTruth.jpg" />
+    <None Remove="Images\MemeTemplates\TrolleyProblem.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Images\0.png">
+    <Content Include="Images\HeatingUp\0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\1.png">
+    <Content Include="Images\HeatingUp\1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\2.png">
+    <Content Include="Images\HeatingUp\2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\3.png">
+    <Content Include="Images\HeatingUp\3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\4.png">
+    <Content Include="Images\HeatingUp\4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\5.png">
+    <Content Include="Images\HeatingUp\5.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\6.png">
+    <Content Include="Images\HeatingUp\6.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\7.png">
+    <Content Include="Images\HeatingUp\7.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\8.png">
+    <Content Include="Images\HeatingUp\8.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\9.png">
+    <Content Include="Images\HeatingUp\9.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\heatingup.png">
+    <Content Include="Images\HeatingUp\heatingup.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\AlarmClock.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\CrystalOfTruth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\Disappointment.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\DistractedBoyfriend.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\DogBite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\GruPlan.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\KaibasDefeat.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\LightBulb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\DailyStruggle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\Coma.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\KomiPaper.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\Pigeon.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\Pills.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\ScrollOfTruth.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\MemeTemplates\TrolleyProblem.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -58,6 +118,7 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.0-beta" />
     <PackageReference Include="Fastenshtein" Version="1.0.0.5" />
+    <PackageReference Include="MathNet.Numerics" Version="4.5.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="RestSharp" Version="106.4.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />

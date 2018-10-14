@@ -21,7 +21,7 @@ namespace Rem.Commands
 
         private static readonly Dictionary<ImageType, Tuple<string, string>> TemplateStrings = new Dictionary<ImageType, Tuple<string, string>>
         {
-            {ImageType.Headpat, Tuple.Create("{0} had their head patted.", "{0} had their head patted by {1}.")},
+            {ImageType.Pat, Tuple.Create("{0} had their head patted.", "{0} had their head patted by {1}.")},
             {ImageType.Hug, Tuple.Create("{0}, (>^_^)> <(^.^<)", "{0}, (>^_^)> <(^.^<) from {1}")},
             {ImageType.Cuddle, Tuple.Create("{0} was cuddled.", "{0} was cuddled by {1}.")}
         };
@@ -34,25 +34,24 @@ namespace Rem.Commands
         }
 
         [Command("pat"), Summary("Headpats a user (or yourself if not specified)")]
-        [Alias("headpat")]
         public async Task Pat([Summary("The person to headpat")] IUser user = null, [Remainder] string text = null)
         {
-            await HandleImageCommand(ImageType.Headpat, user, text);
+            await HandleImageCommand(ImageType.Pat, user);
         }
 
         [Command("hug"), Summary("Hug a user (or yourself if not specified)")]
         public async Task Hug([Summary("The person to hug")] IUser user = null, [Remainder] string text = null)
         {
-            await HandleImageCommand(ImageType.Hug, user, text);
+            await HandleImageCommand(ImageType.Hug, user);
         }
 
         [Command("cuddle"), Summary("Cuddle a user (or yourself if not specified)")]
         public async Task Cuddle([Summary("The person to cuddle")] IUser user = null, [Remainder] string text = null)
         {
-            await HandleImageCommand(ImageType.Cuddle, user, text);
+            await HandleImageCommand(ImageType.Cuddle, user);
         }
 
-        private async Task HandleImageCommand(ImageType type, IUser user, string text)
+        private async Task HandleImageCommand(ImageType type, IUser user)
         {
             var table = _dbContext.Table<Image>();
             var imageCount = await table.CountAsync(image => image.Type == type);
@@ -87,7 +86,7 @@ namespace Rem.Commands
                 switch (type)
                 {
                     case "pat":
-                        t = ImageType.Headpat;
+                        t = ImageType.Pat;
                         break;
                     case "cuddle":
                         t = ImageType.Cuddle;
