@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class DisappointmentMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public DisappointmentMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("Disappointment.png",
+            _template = new MemeTemplate("Disappointment.png",
                 new TextBoundingBox(115, 720, 469, 164)
                 {
                     CenterWidth = true,

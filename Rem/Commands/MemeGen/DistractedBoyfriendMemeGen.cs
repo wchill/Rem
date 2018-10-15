@@ -16,11 +16,11 @@ namespace Rem.Commands.MemeGen
     {
         private static readonly Font font = SystemFonts.CreateFont("Impact", 20, FontStyle.Bold);
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public DistractedBoyfriendMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("DistractedBoyfriend.jpg",
+            _template = new MemeTemplate("DistractedBoyfriend.jpg",
                 new TextBoundingBox(1338, 823, 500, 260)
                 {
                     CenterWidth = true,

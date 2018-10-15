@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class KaibasDefeatMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public KaibasDefeatMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("KaibasDefeat.png",
+            _template = new MemeTemplate("KaibasDefeat.png",
                 new TextBoundingBox
                 {
                     TopLeft = new PointF(0, 213),

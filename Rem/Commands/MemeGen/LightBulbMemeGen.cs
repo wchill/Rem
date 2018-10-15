@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class LightBulbMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public LightBulbMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("LightBulb.png",
+            _template = new MemeTemplate("LightBulb.png",
                 new TextBoundingBox(112, 767, 335, 126)
                 {
                     CenterWidth = true,

@@ -15,11 +15,11 @@ namespace Rem.Commands.MemeGen
     {
         private static readonly Font font = SystemFonts.CreateFont("Arial", 36);
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public ComaMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("Coma.jpg",
+            _template = new MemeTemplate("Coma.jpg",
                 new TextBoundingBox(145, 73, 570, 74)
                 {
                     ForceNoScaling = true,

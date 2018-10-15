@@ -1,28 +1,25 @@
-﻿using SixLabors.Fonts;
+﻿using MathNet.Numerics.LinearAlgebra;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Rem.Commands.MemeGen
 {
-    public class TextBoundingBox
+    public class TextBoundingBox : BaseBoundingBox
     {
-        public PointF TopLeft { get; set; }
-        public PointF TopRight { get; set; }
-        public PointF BottomLeft { get; set; }
-        public PointF BottomRight { get; set; }
-        public float Padding { get; set; }
-        public List<Rectangle> Masks { get; set; } = new List<Rectangle>();
         public IPen<Rgba32> Pen { get; set; } = null;
         public IBrush<Rgba32> Brush { get; set; } = Brushes.Solid(Rgba32.Black);
         public Font Font { get; set; } = SystemFonts.CreateFont("Arial", 20);
-        public bool CenterWidth { get; set; }
-        public bool CenterHeight { get; set; }
-        public bool ForceNoScaling { get; set; }
-        public bool PreferNoScaling { get; set; }
+        public bool CenterWidth { get; set; } = false;
+        public bool CenterHeight { get; set; } = false;
+        public bool ForceNoScaling { get; set; } = false;
+        public bool PreferNoScaling { get; set; } = false;
 
         public TextBoundingBox()
         {
@@ -37,68 +34,126 @@ namespace Rem.Commands.MemeGen
             BottomRight = new PointF(x + w, y + h);
         }
 
-        public float WidthTop
+        public override Task<bool> CanHandleAsync(string input)
         {
-            get
-            {
-                return TopRight.X - TopLeft.X - (2 * Padding);
-            }
+            return Task.FromResult(true);
         }
 
-        public float WidthBottom
+        public override void SetInput(string input)
         {
-            get
-            {
-                return BottomRight.X - BottomLeft.X - (2 * Padding);
-            }
+            base.SetInput(input);
         }
 
-        public float HeightLeft
+        internal override Task<Matrix<float>> ApplyAsyncInternal(IImageProcessingContext<Rgba32> context)
         {
-            get
+            if (_lastInput == null)
             {
-                return BottomLeft.Y - TopLeft.Y - (2 * Padding);
+                throw new InvalidOperationException("Input cannot be null.");
             }
+
+            var scaledFont = CalculateScaleSize(_lastInput);
+
+            var py = CenterHeight ? MaxHeight / 2 : 0;
+
+            var hAlign = CenterWidth ? HorizontalAlignment.Center : HorizontalAlignment.Left;
+            var vAlign = CenterHeight ? VerticalAlignment.Center : VerticalAlignment.Top;
+            var textGraphicOptions = new TextGraphicsOptions(true)
+            {
+                HorizontalAlignment = hAlign,
+                VerticalAlignment = vAlign,
+                WrapTextWidth = MaxWidth
+            };
+
+            context.DrawText(textGraphicOptions, _lastInput, scaledFont, Brush, Pen, new PointF(0, py));
+
+            return Task.FromResult(GetProjectiveTransformationMatrix());
         }
 
-        public float HeightRight
+        private Font CalculateScaleSize(string text)
         {
-            get
-            {
-                return BottomRight.Y - TopRight.Y - (2 * Padding);
-            }
-        }
+            var targetWidth = MaxWidth;
+            var targetHeight = MaxHeight;
 
-        public float MaxWidth
-        {
-            get
-            {
-                return Math.Max(WidthTop, WidthBottom);
-            }
-        }
+            var targetMinHeight = targetHeight * 0.75f;
+            var scaledFont = Font;
 
-        public float MaxHeight
-        {
-            get
+            var size = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
             {
-                return Math.Max(HeightLeft, HeightRight);
-            }
-        }
+                WrappingWidth = targetWidth
+            });
 
-        public Point BoundingBoxTopLeft
-        {
-            get
+            if (ForceNoScaling || PreferNoScaling)
             {
-                return new Point((int) Math.Min(TopLeft.X, BottomLeft.X), (int) Math.Min(TopLeft.Y, TopRight.Y));
+                if (ForceNoScaling && (size.Width > targetWidth || size.Height > targetHeight))
+                {
+                    throw new ArgumentException("Unable to fit input into meme because it was too long.");
+                }
+                else if (!(size.Width > targetWidth || size.Height > targetHeight))
+                {
+                    return scaledFont;
+                }
             }
-        }
+            var longestWord = text.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(w => TextMeasurer.Measure(w, new RendererOptions(scaledFont)
+                {
+                    WrappingWidth = targetWidth
+                })).OrderByDescending(s => s.Width).First();
 
-        public Point BoundingBoxBottomRight
-        {
-            get
+            var scaleFactor = scaledFont.Size;
+            var minScaleFactor = 0.1f;
+
+            if (size.Height < targetHeight && size.Width < targetWidth)
             {
-                return new Point((int)Math.Max(TopRight.X, BottomRight.X), (int)Math.Max(BottomLeft.Y, BottomRight.Y));
+                while (size.Height < targetHeight && size.Width < targetWidth)
+                {
+                    while (scaleFactor > minScaleFactor)
+                    {
+                        scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
+                        size = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
+                        {
+                            WrappingWidth = targetWidth
+                        });
+
+                        if (size.Height > targetHeight || size.Width > targetWidth)
+                        {
+                            scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
+                            scaleFactor = Math.Max(minScaleFactor, scaleFactor / 2);
+                        }
+                    }
+                }
             }
+            else
+            {
+                while (size.Height > targetHeight || size.Width > targetWidth)
+                {
+                    while (scaleFactor > minScaleFactor)
+                    {
+                        scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
+                        size = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
+                        {
+                            WrappingWidth = targetWidth
+                        });
+
+                        if (size.Height < targetHeight && size.Width < targetWidth)
+                        {
+                            scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
+                            scaleFactor = Math.Max(minScaleFactor, scaleFactor / 2);
+                        }
+                    }
+                }
+                scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
+            }
+
+            size = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
+            {
+                WrappingWidth = targetWidth
+            });
+
+            if (size.Width > targetWidth || size.Height > targetHeight)
+            {
+                throw new ArgumentException("Unable to fit input into meme because it was too long.");
+            }
+            return scaledFont;
         }
     }
 }

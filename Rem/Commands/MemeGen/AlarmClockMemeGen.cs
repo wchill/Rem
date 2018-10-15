@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class AlarmClockMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public AlarmClockMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("AlarmClock.png",
+            _template = new MemeTemplate("AlarmClock.png",
                 new TextBoundingBox(1755, 190, 790, 120)
                 {
                     CenterWidth = true,

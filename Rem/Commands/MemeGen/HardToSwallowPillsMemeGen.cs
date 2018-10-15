@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class HardToSwallowPillsMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public HardToSwallowPillsMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("Pills.jpg", new TextBoundingBox(192, 887, 437, 285)
+            _template = new MemeTemplate("Pills.jpg", new TextBoundingBox(192, 887, 437, 285)
             {
                 CenterWidth = true,
                 CenterHeight = true

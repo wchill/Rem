@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class TrolleyProblemMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public TrolleyProblemMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("TrolleyProblem.png",
+            _template = new MemeTemplate("TrolleyProblem.png",
                 new TextBoundingBox(787, 23, 350, 120)
                 {
                     CenterWidth = true,

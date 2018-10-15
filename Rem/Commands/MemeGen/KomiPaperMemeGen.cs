@@ -14,27 +14,35 @@ namespace Rem.Commands.MemeGen
     public class KomiPaperMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public KomiPaperMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("KomiPaper.png", 
-                new TextBoundingBox
+            _template = new MemeTemplate("KomiPaper.png", 
+                new MultiBoundingBox(new TextBoundingBox()
                 {
-                    TopLeft = new PointF(122, 238),
-                    TopRight = new PointF(354, 279),
-                    BottomLeft = new PointF(84, 364),
-                    BottomRight = new PointF(316, 405),
-                    Padding = 10,
-                    Masks =
+                    TopLeft = new PointF(245, 479),
+                    TopRight = new PointF(708, 558),
+                    BottomLeft = new PointF(168, 728),
+                    BottomRight = new PointF(632, 810),
+                }, new ImageBoundingBox()
+                {
+                    TopLeft = new PointF(245, 479),
+                    TopRight = new PointF(708, 558),
+                    BottomLeft = new PointF(94, 988),
+                    BottomRight = new PointF(557, 1067)
+                })
                     {
-                        new Rectangle(73, 316, 19, 49),
-                        new Rectangle(333, 277, 21, 72)
-                    }
-                });
+                        Padding = 10,
+                        Masks = new List<Rectangle>
+                        {
+                            new Rectangle(0, 631, 186, 446),
+                            new Rectangle(666, 552, 50, 150)
+                        }
+                    });
         }
 
-        [Command("komi"), Summary("Komi-san reads a paper")]
+        [Command("komi"), Summary("Komi-san reads something and gets excited!")]
         public async Task GenerateKomiPaperMeme([Remainder] string text)
         {
             using (Context.Channel.EnterTypingState())

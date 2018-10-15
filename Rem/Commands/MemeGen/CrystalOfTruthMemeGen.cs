@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class CrystalOfTruthMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public CrystalOfTruthMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("CrystalOfTruth.png",
+            _template = new MemeTemplate("CrystalOfTruth.png",
                 new TextBoundingBox(70, 530, 380, 80)
                 {
                     CenterWidth = true,

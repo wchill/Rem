@@ -16,11 +16,11 @@ namespace Rem.Commands.MemeGen
     {
         private static readonly Font font = SystemFonts.CreateFont("Impact", 20, FontStyle.Bold);
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public PigeonMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("Pigeon.jpg",
+            _template = new MemeTemplate("Pigeon.jpg",
                 new TextBoundingBox(196, 181, 350, 120)
                 {
                     CenterWidth = true,

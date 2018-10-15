@@ -15,11 +15,11 @@ namespace Rem.Commands.MemeGen
     public class ScrollOfTruthMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public ScrollOfTruthMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("ScrollOfTruth.jpg",
+            _template = new MemeTemplate("ScrollOfTruth.jpg",
                 new TextBoundingBox(241, 719, 220, 280)
                 {
                     CenterWidth = true,

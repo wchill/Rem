@@ -15,11 +15,11 @@ namespace Rem.Commands.MemeGen
     public class DailyStruggleMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public DailyStruggleMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("DailyStruggle.png",
+            _template = new MemeTemplate("DailyStruggle.png",
                 new TextBoundingBox
                 {
                     TopLeft = new PointF(79, 179),

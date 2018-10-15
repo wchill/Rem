@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
     public class DogBiteMemeGen : ModuleBase
     {
         private readonly BotState _botState;
-        private readonly TextMemeTemplate _template;
+        private readonly MemeTemplate _template;
         public DogBiteMemeGen(BotState state)
         {
             _botState = state;
-            _template = new TextMemeTemplate("DogBite.png",
+            _template = new MemeTemplate("DogBite.png",
                 new TextBoundingBox(179, 519, 310, 160)
                 {
                     CenterWidth = true,
