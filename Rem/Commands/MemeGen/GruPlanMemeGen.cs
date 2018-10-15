@@ -18,7 +18,7 @@ namespace Rem.Commands.MemeGen
             _template = new MemeTemplate("GruPlan.png",
                 new MultiBoundingBox(new TextBoundingBox()
                 {
-                    CenterWidth = true
+                    CenterHeight = false
                 }, new ImageBoundingBox())
                 {
                     TopLeft = new PointF(425, 114),
@@ -33,7 +33,7 @@ namespace Rem.Commands.MemeGen
                 },
                 new MultiBoundingBox(new TextBoundingBox()
                 {
-                    CenterWidth = true
+                    CenterHeight = false
                 }, new ImageBoundingBox())
                 {
                     TopLeft = new PointF(1118, 114),
@@ -48,7 +48,7 @@ namespace Rem.Commands.MemeGen
                 },
                 new MultiBoundingBox(new TextBoundingBox()
                 {
-                    CenterWidth = true
+                    CenterHeight = false
                 }, new ImageBoundingBox())
                 {
                     TopLeft = new PointF(425, 562),
@@ -63,7 +63,7 @@ namespace Rem.Commands.MemeGen
                 },
                 new MultiBoundingBox(new TextBoundingBox()
                 {
-                    CenterWidth = true
+                    CenterHeight = false
                 }, new ImageBoundingBox())
                 {
                     TopLeft = new PointF(1118, 562),

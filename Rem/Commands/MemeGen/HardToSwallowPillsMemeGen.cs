@@ -18,11 +18,18 @@ namespace Rem.Commands.MemeGen
         public HardToSwallowPillsMemeGen(BotState state)
         {
             _botState = state;
-            _template = new MemeTemplate("Pills.jpg", new TextBoundingBox(192, 887, 437, 285)
-            {
-                CenterWidth = true,
-                CenterHeight = true
-            });
+            _template = new MemeTemplate("Pills.jpg",
+                new MultiBoundingBox(192, 887, 437, 285,
+                    new TextBoundingBox(),
+                    new ImageBoundingBox()
+                    {
+                        GraphicsOptions = new SixLabors.ImageSharp.GraphicsOptions(true)
+                        {
+                            AntialiasSubpixelDepth = 8,
+                            BlenderMode = PixelBlenderMode.Normal,
+                            BlendPercentage = 0.5f
+                        }
+                    }));
         }
 
         [Command("pills"), Summary("Hard to swallow pills")]

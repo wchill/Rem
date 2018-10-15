@@ -21,30 +21,28 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("DistractedBoyfriend.jpg",
-                new TextBoundingBox(1338, 823, 500, 260)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true,
-                    Brush = Brushes.Solid(Rgba32.White),
-                    Pen = Pens.Solid(Rgba32.Black, 2),
-                    Font = font
-                },
-                new TextBoundingBox(1874, 829, 440, 260)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true,
-                    Brush = Brushes.Solid(Rgba32.White),
-                    Pen = Pens.Solid(Rgba32.Black, 2),
-                    Font = font
-                },
-                new TextBoundingBox(487, 1016, 500, 260)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true,
-                    Brush = Brushes.Solid(Rgba32.White),
-                    Pen = Pens.Solid(Rgba32.Black, 2),
-                    Font = font
-                });
+                new MultiBoundingBox(
+                    new TextBoundingBox(1338, 823, 500, 260)
+                    {
+                        Brush = Brushes.Solid(Rgba32.White),
+                        Pen = Pens.Solid(Rgba32.Black, 2),
+                        Font = font
+                    }, new ImageBoundingBox(1338, 703, 500, 500)),
+
+                new MultiBoundingBox(
+                    new TextBoundingBox(1874, 829, 440, 260)
+                    {
+                        Brush = Brushes.Solid(Rgba32.White),
+                        Pen = Pens.Solid(Rgba32.Black, 2),
+                        Font = font
+                    }, new ImageBoundingBox(1844, 689, 500, 500)),
+                new MultiBoundingBox(
+                    new TextBoundingBox(487, 1016, 500, 260)
+                    {
+                        Brush = Brushes.Solid(Rgba32.White),
+                        Pen = Pens.Solid(Rgba32.Black, 2),
+                        Font = font
+                    }, new ImageBoundingBox(487, 876, 500, 500)));
         }
 
         [Command("distractedbf"), Summary("Disloyal man walking with his girlfriend and looking amazed at another seductive girl")]

@@ -19,11 +19,7 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("Disappointment.png",
-                new TextBoundingBox(115, 720, 469, 164)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true
-                });
+                new MultiBoundingBox(115, 720, 469, 164));
         }
 
         [Command("disappointment"), Summary("Free disappointment")]

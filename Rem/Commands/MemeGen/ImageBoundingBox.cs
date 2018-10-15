@@ -35,8 +35,14 @@ namespace Rem.Commands.MemeGen
             // "image/webp"
         };
 
-        public GraphicsOptions GraphicsOptions { get; set; } = GraphicsOptions.Default;
-        public ImageScalingMode ScalingMode { get; set; } = ImageScalingMode.FitWithLetterbox;
+        public GraphicsOptions GraphicsOptions { get; set; } = new GraphicsOptions(true)
+        {
+            AntialiasSubpixelDepth = 8,
+            BlenderMode = PixelBlenderMode.Normal,
+            BlendPercentage = 1.0f
+        };
+        public ImageScalingMode PortraitScalingMode { get; set; } = ImageScalingMode.FitWithLetterbox;
+        public ImageScalingMode LandscapeScalingMode { get; set; } = ImageScalingMode.FitWithLetterbox;
 
         public ImageBoundingBox()
         {
@@ -81,7 +87,8 @@ namespace Rem.Commands.MemeGen
         internal override async Task<Matrix<float>> ApplyAsyncInternal(IImageProcessingContext<Rgba32> context)
         {
             var image = await GetImageFromUrl(_lastInput);
-            switch (ScalingMode)
+            var scalingMode = (image.Width / (double)image.Height) >= 1.0 ? LandscapeScalingMode : PortraitScalingMode;
+            switch (scalingMode)
             {
                 case ImageScalingMode.None:
                     return ApplyNone(context, image);

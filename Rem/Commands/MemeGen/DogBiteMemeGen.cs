@@ -19,11 +19,7 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("DogBite.png",
-                new TextBoundingBox(179, 519, 310, 160)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true
-                });
+                new MultiBoundingBox(179, 519, 310, 160));
         }
 
         [Command("dogbite"), Summary("Does your dog bite? No, but it can hurt you in other ways.")]

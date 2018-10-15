@@ -19,11 +19,7 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("AlarmClock.png",
-                new TextBoundingBox(1755, 190, 790, 120)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true
-                });
+                new MultiBoundingBox(1755, 190, 790, 120));
         }
 
         [Command("alarmclock"), Summary("Alarm Clock V2, Designed to Wake You Up!")]

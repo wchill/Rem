@@ -21,22 +21,24 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("Pigeon.jpg",
-                new TextBoundingBox(196, 181, 350, 120)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true,
-                    Brush = Brushes.Solid(Rgba32.White),
-                    Pen = Pens.Solid(Rgba32.Black, 2),
-                    Font = font
-                },
-                new TextBoundingBox(738, 144, 300, 220)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true,
-                    Brush = Brushes.Solid(Rgba32.White),
-                    Pen = Pens.Solid(Rgba32.Black, 2),
-                    Font = font
-                },
+                new MultiBoundingBox(
+                    new TextBoundingBox(196, 181, 350, 120)
+                    {
+                        CenterWidth = true,
+                        CenterHeight = true,
+                        Brush = Brushes.Solid(Rgba32.White),
+                        Pen = Pens.Solid(Rgba32.Black, 2),
+                        Font = font
+                    }, new ImageBoundingBox(190, 196, 375, 375)),
+                new MultiBoundingBox(
+                    new TextBoundingBox(738, 144, 300, 220)
+                    {
+                        CenterWidth = true,
+                        CenterHeight = true,
+                        Brush = Brushes.Solid(Rgba32.White),
+                        Pen = Pens.Solid(Rgba32.Black, 2),
+                        Font = font
+                    }, new ImageBoundingBox(780, 148, 215, 215)),
                 new TextBoundingBox(277, 741, 694, 80)
                 {
                     CenterWidth = true,

@@ -20,23 +20,19 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("DailyStruggle.png",
-                new TextBoundingBox
+                new MultiBoundingBox
                 {
                     TopLeft = new PointF(79, 179),
                     TopRight = new PointF(348, 129),
                     BottomLeft = new PointF(126, 312),
-                    BottomRight = new PointF(401, 232),
-                    CenterWidth = true,
-                    CenterHeight = true
+                    BottomRight = new PointF(401, 232)
                 },
-                new TextBoundingBox
+                new MultiBoundingBox
                 {
                     TopLeft = new PointF(409, 121),
                     TopRight = new PointF(608, 92),
                     BottomLeft = new PointF(462, 240),
-                    BottomRight = new PointF(665, 183),
-                    CenterWidth = true,
-                    CenterHeight = true
+                    BottomRight = new PointF(665, 183)
                 });
         }
 

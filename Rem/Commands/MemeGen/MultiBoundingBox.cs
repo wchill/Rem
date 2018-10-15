@@ -82,6 +82,16 @@ namespace Rem.Commands.MemeGen
             }
         }
 
+        public MultiBoundingBox() : this(0, 0, 0, 0)
+        {
+
+        }
+
+        public MultiBoundingBox(float x, float y, float w, float h) : this(x, y, w, h, new TextBoundingBox(), new ImageBoundingBox())
+        {
+
+        }
+
         public MultiBoundingBox(params BaseBoundingBox[] boundingBoxes)
         {
             _boundingBoxes = boundingBoxes;

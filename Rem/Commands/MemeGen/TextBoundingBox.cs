@@ -16,8 +16,8 @@ namespace Rem.Commands.MemeGen
         public IPen<Rgba32> Pen { get; set; } = null;
         public IBrush<Rgba32> Brush { get; set; } = Brushes.Solid(Rgba32.Black);
         public Font Font { get; set; } = SystemFonts.CreateFont("Arial", 20);
-        public bool CenterWidth { get; set; } = false;
-        public bool CenterHeight { get; set; } = false;
+        public bool CenterWidth { get; set; } = true;
+        public bool CenterHeight { get; set; } = true;
         public bool ForceNoScaling { get; set; } = false;
         public bool PreferNoScaling { get; set; } = false;
 

@@ -19,16 +19,8 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("TrolleyProblem.png",
-                new TextBoundingBox(787, 23, 350, 120)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true
-                },
-                new TextBoundingBox(371, 379, 350, 120)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true
-                });
+                new MultiBoundingBox(787, 23, 350, 120),
+                new MultiBoundingBox(371, 379, 350, 120));
         }
 
         [Command("trolleyproblem"), Summary("Multi track drifting!")]

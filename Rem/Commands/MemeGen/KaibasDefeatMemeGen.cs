@@ -19,23 +19,19 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("KaibasDefeat.png",
-                new TextBoundingBox
+                new MultiBoundingBox()
                 {
                     TopLeft = new PointF(0, 213),
                     TopRight = new PointF(285, 135),
                     BottomLeft = new PointF(113, 585),
-                    BottomRight = new PointF(394, 506),
-                    CenterWidth = true,
-                    CenterHeight = true
+                    BottomRight = new PointF(394, 506)
                 },
-                new TextBoundingBox
+                new MultiBoundingBox()
                 {
                     TopLeft = new PointF(0, 750),
                     TopRight = new PointF(353, 685),
                     BottomLeft = new PointF(50, 1145),
-                    BottomRight = new PointF(419, 1096),
-                    CenterWidth = true,
-                    CenterHeight = true
+                    BottomRight = new PointF(419, 1096)
                 });
         }
 

@@ -19,11 +19,7 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("CrystalOfTruth.png",
-                new TextBoundingBox(70, 530, 380, 80)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true
-                });
+                new TextBoundingBox(70, 530, 380, 80));
         }
 
         [Command("crystaloftruth"), Summary("At long last I have found it, the crystal which utters only truth!")]

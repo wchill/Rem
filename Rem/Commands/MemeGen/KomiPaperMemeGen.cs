@@ -25,19 +25,24 @@ namespace Rem.Commands.MemeGen
                     TopRight = new PointF(708, 558),
                     BottomLeft = new PointF(168, 728),
                     BottomRight = new PointF(632, 810),
+                    CenterHeight = false,
+                    CenterWidth = false
                 }, new ImageBoundingBox()
                 {
                     TopLeft = new PointF(245, 479),
                     TopRight = new PointF(708, 558),
                     BottomLeft = new PointF(94, 988),
-                    BottomRight = new PointF(557, 1067)
+                    BottomRight = new PointF(557, 1067),
+                    LandscapeScalingMode = ImageScalingMode.FitWithLetterbox,
+                    PortraitScalingMode = ImageScalingMode.FillFit
                 })
                     {
                         Padding = 10,
                         Masks = new List<Rectangle>
                         {
                             new Rectangle(0, 631, 186, 446),
-                            new Rectangle(666, 552, 50, 150)
+                            new Rectangle(666, 552, 50, 150),
+                            new Rectangle(0, 1065, 557, 205)
                         }
                     });
         }

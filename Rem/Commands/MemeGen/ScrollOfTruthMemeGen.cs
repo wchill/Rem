@@ -20,11 +20,7 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             _template = new MemeTemplate("ScrollOfTruth.jpg",
-                new TextBoundingBox(241, 719, 220, 280)
-                {
-                    CenterWidth = true,
-                    CenterHeight = true
-                });
+                new MultiBoundingBox(241, 719, 220, 280));
         }
 
         [Command("scrolloftruth"), Summary("I've finally found it... after 15 years... the scroll of truth!")]
