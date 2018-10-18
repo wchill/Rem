@@ -119,7 +119,7 @@ namespace Rem.Commands.MemeGen
             var boxAspectRatio = MaxWidth / (double)MaxHeight;
             double scaledWidth = image.Width;
             double scaledHeight = image.Height;
-            Point drawingPoint = new Point(0, 0);
+            var drawingPoint = new Point(0, 0);
             if (imageAspectRatio < boxAspectRatio)
             {
                 // box is wider than image
@@ -134,6 +134,7 @@ namespace Rem.Commands.MemeGen
                 scaledHeight = image.Height;
                 drawingPoint = new Point((int)((scaledWidth - image.Width) / 2), 0);
             }
+            context.Resize((int)scaledWidth, (int)scaledHeight);
             context.DrawImage(GraphicsOptions, image, drawingPoint);
             return GetProjectiveTransformationMatrix((float)scaledWidth, (float)scaledHeight);
         }
@@ -144,7 +145,7 @@ namespace Rem.Commands.MemeGen
             var boxAspectRatio = MaxWidth / (double)MaxHeight;
             double scaledWidth = image.Width;
             double scaledHeight = image.Height;
-            Point drawingPoint = new Point(0, 0);
+            var drawingPoint = new Point(0, 0);
             if (imageAspectRatio < boxAspectRatio)
             {
                 // box is wider than image
@@ -159,12 +160,14 @@ namespace Rem.Commands.MemeGen
                 scaledWidth = image.Width;
                 drawingPoint = new Point(0, (int)((scaledHeight - image.Height) / 2));
             }
+            context.Resize((int) scaledWidth, (int) scaledHeight);
             context.DrawImage(GraphicsOptions, image, drawingPoint);
             return GetProjectiveTransformationMatrix((float)scaledWidth, (float)scaledHeight);
         }
 
         private Matrix<float> ApplyStretchFit(IImageProcessingContext<Rgba32> context, Image<Rgba32> image)
         {
+            context.Resize(image.Width, image.Height);
             context.DrawImage(GraphicsOptions, image, new Point(0, 0));
             return GetProjectiveTransformationMatrix(image.Width, image.Height);
         }

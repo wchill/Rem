@@ -18,16 +18,20 @@ namespace Rem.Commands.MemeGen
         public KomiPaperMemeGen(BotState state)
         {
             _botState = state;
-            _template = new MemeTemplate("KomiPaper.png", 
-                new MultiBoundingBox(new TextBoundingBox()
+            var fontCollection = new FontCollection();
+            fontCollection.Install(@"Fonts\mangat.ttf", out var fontDescription);
+            _template = new MemeTemplate("KomiPaper.png",
+                new TextBoundingBox()
                 {
                     TopLeft = new PointF(245, 479),
                     TopRight = new PointF(708, 558),
                     BottomLeft = new PointF(168, 728),
                     BottomRight = new PointF(632, 810),
                     CenterHeight = false,
-                    CenterWidth = false
-                }, new ImageBoundingBox()
+                    CenterWidth = false,
+                    Font = fontCollection.CreateFont(fontDescription.FontFamily, 20)
+                },
+                new MultiBoundingBox(new ImageBoundingBox()
                 {
                     TopLeft = new PointF(245, 479),
                     TopRight = new PointF(708, 558),
@@ -36,15 +40,15 @@ namespace Rem.Commands.MemeGen
                     LandscapeScalingMode = ImageScalingMode.FitWithLetterbox,
                     PortraitScalingMode = ImageScalingMode.FillFit
                 })
-                    {
-                        Padding = 10,
-                        Masks = new List<Rectangle>
+                {
+                    Padding = 10,
+                    Masks = new List<Rectangle>
                         {
-                            new Rectangle(0, 631, 186, 446),
-                            new Rectangle(666, 552, 50, 150),
-                            new Rectangle(0, 1065, 557, 205)
+                        new Rectangle(0, 631, 186, 446),
+                        new Rectangle(666, 552, 50, 150),
+                        new Rectangle(0, 1065, 557, 205)
                         }
-                    });
+                });
         }
 
         [Command("komi"), Summary("Komi-san reads something and gets excited!")]
