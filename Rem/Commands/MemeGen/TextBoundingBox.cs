@@ -14,11 +14,11 @@ namespace Rem.Commands.MemeGen
 {
     public class TextBoundingBox : BaseBoundingBox
     {
-        private static Font _defaultFont = InitializeDefaultFont();
+        private static readonly Font DefaultFont = InitializeDefaultFont();
 
         public IPen<Rgba32> Pen { get; set; } = null;
         public IBrush<Rgba32> Brush { get; set; } = Brushes.Solid(Rgba32.Black);
-        public Font Font { get; set; } = _defaultFont;
+        public Font Font { get; set; } = DefaultFont;
         public bool CenterWidth { get; set; } = true;
         public bool CenterHeight { get; set; } = true;
         public bool PreferNoScaling { get; set; } = false;
