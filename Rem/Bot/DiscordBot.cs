@@ -27,6 +27,7 @@ namespace Rem.Bot
 
             _client = new DiscordSocketClient();
             _client.Log += Log;
+            _client.Ready += () => Log($"Running as user {_client.CurrentUser.Username} ({_client.CurrentUser.Id})");
 
             _commands = new CommandService();
             _services = new ServiceCollection();
@@ -35,6 +36,12 @@ namespace Rem.Bot
         private static Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.ToString());
+            return Task.CompletedTask;
+        }
+
+        private static Task Log(string msg)
+        {
+            Console.WriteLine(msg);
             return Task.CompletedTask;
         }
 
@@ -76,8 +83,7 @@ namespace Rem.Bot
                         {
                             //Debugger.Break();
                             await Console.Error.WriteLineAsync($"Error encountered when handling command {message}:");
-                            await Console.Error.WriteLineAsync(execResult.Exception.Message);
-                            await Console.Error.WriteLineAsync(execResult.Exception.StackTrace);
+                            await Console.Error.WriteLineAsync(execResult.Exception.ToString());
                         }
 
                         break;
