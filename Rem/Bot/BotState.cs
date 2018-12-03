@@ -12,7 +12,6 @@ namespace Rem.Bot
     public class BotState
     {
         // These values cannot change without restarting bot
-        public string SqliteDb { get; set; }
         public string ClientSecret { get; set; }
 
         // These values can change

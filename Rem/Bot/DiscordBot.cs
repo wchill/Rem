@@ -18,10 +18,12 @@ namespace Rem.Bot
         private readonly CommandService _commands;
         private readonly ServiceCollection _services;
         private readonly BotState _state;
+        private readonly SQLiteAsyncConnection _dbContext;
 
-        public DiscordBot(string filePath)
+        public DiscordBot(string configPath, string dbPath)
         {
-            _state = BotState.Initialize(filePath);
+            _state = BotState.Initialize(configPath);
+            _dbContext = new SQLiteAsyncConnection(dbPath);
 
             _client = new DiscordSocketClient();
             _client.Log += Log;
@@ -38,10 +40,9 @@ namespace Rem.Bot
 
         private async Task InstallCommands()
         {
-            var db = new SQLiteAsyncConnection(_state.SqliteDb);
-            await db.CreateTableAsync<Models.Image>();
+            await _dbContext.CreateTableAsync<Models.Image>();
 
-            _services.AddSingleton(db);
+            _services.AddSingleton(_dbContext);
             _services.AddSingleton(_state);
             
             _client.MessageReceived += MessageReceived;
