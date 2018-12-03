@@ -13,7 +13,7 @@ namespace Rem.Commands.MemeGen
 {
     public class ComaMemeGen : ModuleBase
     {
-        private static readonly Font font = SystemFonts.CreateFont("Arial", 36);
+        private static readonly Font font = new Font(TextBoundingBox.DefaultFont, 36);
         private readonly BotState _botState;
         private readonly MemeTemplate _template;
         public ComaMemeGen(BotState state)

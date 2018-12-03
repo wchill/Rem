@@ -14,7 +14,7 @@ namespace Rem.Commands.MemeGen
 {
     public class TextBoundingBox : BaseBoundingBox
     {
-        private static readonly Font DefaultFont = InitializeDefaultFont();
+        public static readonly Font DefaultFont = InitializeDefaultFont();
 
         public IPen<Rgba32> Pen { get; set; } = null;
         public IBrush<Rgba32> Brush { get; set; } = Brushes.Solid(Rgba32.Black);
@@ -46,11 +46,6 @@ namespace Rem.Commands.MemeGen
         public override Task<bool> CanHandleAsync(string input)
         {
             return Task.FromResult(true);
-        }
-
-        public override void SetInput(string input)
-        {
-            base.SetInput(input);
         }
 
         internal override Task<Matrix<float>> ApplyAsyncInternal(IImageProcessingContext<Rgba32> context)
