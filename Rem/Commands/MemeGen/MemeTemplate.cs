@@ -46,20 +46,6 @@ namespace Rem.Commands.MemeGen
                     for (var i = 0; i < _boundingBoxes.Length; i++)
                     {
                         img2.Mutate(ctx => ctx.CreateLayerFromBoundingBox(_boundingBoxes[i], inputs[i]));
-                        /*
-                        using (var layer = new Image<Rgba32>(img2.Width, img2.Height))
-                        {
-                            var box = _boundingBoxes[i];
-                            var canHandle = await box.CanHandleAsync(inputs[i]);
-                            if (!canHandle)
-                            {
-                                throw new ArgumentException($"Parameter {i + 1} is not valid for this box.");
-                            }
-                            box.SetInput(inputs[i]);
-                            layer.Mutate(ctx => box.Apply(ctx));
-                            img2.Mutate(ctx => ctx.DrawImage(layer, 1.0f, new Point(0, 0)));
-                        }
-                        */
                     }
                     var filename = Guid.NewGuid().ToString() + ".png";
                     img2.Save(filename);

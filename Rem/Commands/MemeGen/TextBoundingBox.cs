@@ -18,7 +18,6 @@ namespace Rem.Commands.MemeGen
         public Font Font { get; set; } = SystemFonts.CreateFont("Arial", 20);
         public bool CenterWidth { get; set; } = true;
         public bool CenterHeight { get; set; } = true;
-        public bool ForceNoScaling { get; set; } = false;
         public bool PreferNoScaling { get; set; } = false;
 
         public TextBoundingBox()
@@ -82,13 +81,9 @@ namespace Rem.Commands.MemeGen
                 WrappingWidth = targetWidth
             });
 
-            if (ForceNoScaling || PreferNoScaling)
+            if (PreferNoScaling)
             {
-                if (ForceNoScaling && (size.Width > targetWidth || size.Height > targetHeight))
-                {
-                    throw new ArgumentException("Unable to fit input into meme because it was too long.");
-                }
-                else if (!(size.Width > targetWidth || size.Height > targetHeight))
+                if (!(size.Width > targetWidth || size.Height > targetHeight))
                 {
                     return scaledFont;
                 }
@@ -99,7 +94,7 @@ namespace Rem.Commands.MemeGen
                     WrappingWidth = targetWidth
                 })).OrderByDescending(s => s.Width).First();
 
-            var scaleFactor = scaledFont.Size;
+            var scaleFactor = scaledFont.Size / 2;
             var minScaleFactor = 0.1f;
 
             if (size.Height < targetHeight && size.Width < targetWidth)
@@ -141,7 +136,7 @@ namespace Rem.Commands.MemeGen
                         }
                     }
                 }
-                scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
+                scaledFont = new Font(scaledFont, scaledFont.Size - (scaleFactor * 2));
             }
 
             size = TextMeasurer.Measure(text, new RendererOptions(scaledFont)

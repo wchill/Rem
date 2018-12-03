@@ -22,12 +22,16 @@ namespace Rem.Commands.MemeGen
             _template = new MemeTemplate("Coma.jpg",
                 new TextBoundingBox(145, 73, 570, 74)
                 {
-                    ForceNoScaling = true,
+                    PreferNoScaling = true,
+                    CenterHeight = false,
+                    CenterWidth = false,
                     Font = font
                 },
                 new TextBoundingBox(158, 150, 567, 110)
                 {
                     PreferNoScaling = true,
+                    CenterHeight = false,
+                    CenterWidth = false,
                     Font = font
                 });
         }

@@ -39,7 +39,7 @@ namespace Rem.Commands.MemeGen
                         Pen = Pens.Solid(Rgba32.Black, 2),
                         Font = font
                     }, new ImageBoundingBox(780, 148, 215, 215)),
-                new TextBoundingBox(277, 741, 694, 80)
+                new TextBoundingBox(50, 621, 1100, 200)
                 {
                     CenterWidth = true,
                     CenterHeight = true,

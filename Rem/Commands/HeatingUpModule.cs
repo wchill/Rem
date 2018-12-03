@@ -32,13 +32,13 @@ namespace Rem.Commands
                 
                 for (var i = 0; i < 10; i++)
                 {
-                    Digits[i] = Image.Load(@"Images\HeatingUp\" + $"{i}.png");
+                    Digits[i] = Image.Load(@"Images/HeatingUp/" + $"{i}.png");
                 }
             }
 
             if (HeatingUpImg == null)
             {
-                HeatingUpImg = Image.Load(@"Images\HeatingUp\heatingup.png");
+                HeatingUpImg = Image.Load(@"Images/HeatingUp/heatingup.png");
             }
         }
 

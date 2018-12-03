@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Rem.Bot;
+using Rem.Fonts;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.Primitives;
@@ -19,35 +20,42 @@ namespace Rem.Commands.MemeGen
         {
             _botState = state;
             var fontCollection = new FontCollection();
-            fontCollection.Install(@"Fonts\mangat.ttf", out var fontDescription);
+            fontCollection.Install(FontNames.AnimeAce, out var fontDescription);
             _template = new MemeTemplate("KomiPaper.png",
-                new TextBoundingBox()
+                new MultiBoundingBox(new TextBoundingBox()
                 {
+                    /*
                     TopLeft = new PointF(245, 479),
                     TopRight = new PointF(708, 558),
                     BottomLeft = new PointF(168, 728),
                     BottomRight = new PointF(632, 810),
+                    */
                     CenterHeight = false,
                     CenterWidth = false,
                     Font = fontCollection.CreateFont(fontDescription.FontFamily, 20)
-                },
-                new MultiBoundingBox(new ImageBoundingBox()
+                }, new ImageBoundingBox()
+                {
+                    /*
+                    TopLeft = new PointF(245, 479),
+                    TopRight = new PointF(708, 558),
+                    BottomLeft = new PointF(94, 988),
+                    BottomRight = new PointF(557, 1067),
+                    */
+                    LandscapeScalingMode = ImageScalingMode.FitWithLetterbox,
+                    PortraitScalingMode = ImageScalingMode.FitWithLetterbox
+                })
                 {
                     TopLeft = new PointF(245, 479),
                     TopRight = new PointF(708, 558),
                     BottomLeft = new PointF(94, 988),
                     BottomRight = new PointF(557, 1067),
-                    LandscapeScalingMode = ImageScalingMode.FitWithLetterbox,
-                    PortraitScalingMode = ImageScalingMode.FillFit
-                })
-                {
                     Padding = 10,
                     Masks = new List<Rectangle>
-                        {
+                    {
                         new Rectangle(0, 631, 186, 446),
                         new Rectangle(666, 552, 50, 150),
                         new Rectangle(0, 1065, 557, 205)
-                        }
+                    }
                 });
         }
 
