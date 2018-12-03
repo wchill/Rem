@@ -1,0 +1,44 @@
+image: docker:stable
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: discord-rem
+  IMAGE_TAG: $DOCKER_REGISTRY_URL/$IMAGE_NAME:$CI_COMMIT_REF_SLUG
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  before_script:
+    - docker info
+  script:
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+deploy_prod:
+  image: alpine:latest
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - docker
+    - deploy-internal
+  before_script:
+    - apk update
+    - apk add openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - mkdir -p ~/.ssh
+    - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
+  script:
+    - ssh $SSH_USER_HOST "cd $DOCKER_COMPOSE_PATH && docker-compose up -d"
+  environment:
+    name: production
+  only:
+    - master

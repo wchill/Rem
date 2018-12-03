@@ -35,9 +35,6 @@ namespace Rem
                 return 1;
             }
 
-            //configPath = Path.GetFullPath(configPath);
-            //dbPath = Path.GetFullPath(dbPath);
-
             Console.WriteLine($"Using {configPath} for config file");
             Console.WriteLine($"Using {dbPath} for SQLite database");
             

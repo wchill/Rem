@@ -19,18 +19,18 @@ namespace Rem.Attributes
             }
         }
 
-        public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             var roles = ((SocketGuildUser) context.User).Roles;
             foreach (var role in roles)
             {
                 if (_roles.Contains(role.Name.ToLower()))
                 {
-                    return PreconditionResult.FromSuccess();
+                    return Task.FromResult(PreconditionResult.FromSuccess());
                 }
             }
 
-            return PreconditionResult.FromError("You do not have permission to use this command.");
+            return Task.FromResult(PreconditionResult.FromError("You do not have permission to use this command."));
         }
     }
 }
