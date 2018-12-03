@@ -37,7 +37,7 @@ deploy_prod:
     - mkdir -p ~/.ssh
     - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER_HOST "cd $DOCKER_COMPOSE_PATH && docker-compose up -d"
+    - ssh $SSH_USER_HOST "cd $DOCKER_COMPOSE_PATH && docker-compose down && docker-compose up -d"
   environment:
     name: production
   only:

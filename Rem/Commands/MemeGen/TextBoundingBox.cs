@@ -8,17 +8,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rem.Fonts;
 
 namespace Rem.Commands.MemeGen
 {
     public class TextBoundingBox : BaseBoundingBox
     {
+        private static Font _defaultFont = InitializeDefaultFont();
+
         public IPen<Rgba32> Pen { get; set; } = null;
         public IBrush<Rgba32> Brush { get; set; } = Brushes.Solid(Rgba32.Black);
-        public Font Font { get; set; } = SystemFonts.CreateFont("Arial", 20);
+        public Font Font { get; set; } = _defaultFont;
         public bool CenterWidth { get; set; } = true;
         public bool CenterHeight { get; set; } = true;
         public bool PreferNoScaling { get; set; } = false;
+
+        static Font InitializeDefaultFont()
+        {
+            var collection = new FontCollection();
+            collection.Install(FontNames.OpenSans, out var fontDescription);
+            return collection.CreateFont(fontDescription.FontFamily, 20);
+        }
 
         public TextBoundingBox()
         {

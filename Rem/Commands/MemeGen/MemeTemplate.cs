@@ -12,7 +12,7 @@ namespace Rem.Commands.MemeGen
 {
     public class MemeTemplate
     {
-        private static readonly string ImageFolder = @"Images\MemeTemplates\";
+        private static readonly string ImageFolder = @"Images/MemeTemplates/";
         private readonly string _imagePath;
         private readonly BaseBoundingBox[] _boundingBoxes;
 

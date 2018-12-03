@@ -10,6 +10,7 @@
     <None Remove="Fonts\animeace_b.ttf" />
     <None Remove="Fonts\animeace_i.ttf" />
     <None Remove="Fonts\mangat.ttf" />
+    <None Remove="Fonts\OpenSans-Regular.ttf" />
     <None Remove="Images\0.png" />
     <None Remove="Images\1.png" />
     <None Remove="Images\2.png" />
@@ -49,6 +50,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Fonts\mangat.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\OpenSans-Regular.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\HeatingUp\0.png">
