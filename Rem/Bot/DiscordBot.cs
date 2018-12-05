@@ -98,7 +98,7 @@ namespace Rem.Bot
 
         private async Task UpdateDiscordStatus()
         {
-            await _client.SetGameAsync($"bot version {_state.Version}");
+            await _client.SetGameAsync($"{_state.Version}");
             // await _client.SetGameAsync($"{_state.PatCount} pats given, {_state.BribeCount} mods bribed");
         }
 
