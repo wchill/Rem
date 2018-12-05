@@ -13,6 +13,8 @@ namespace Rem.Bot
     {
         // These values cannot change without restarting bot
         public string ClientSecret { get; set; }
+        [JsonIgnore]
+        public string Version { get; private set; }
 
         // These values can change
         public string Prefix { get; set; }
@@ -24,7 +26,7 @@ namespace Rem.Bot
         [JsonIgnore]
         public string FilePath { get; private set; }
 
-        public static BotState Initialize(string filePath)
+        public static BotState Initialize(string version, string filePath)
         {
             try
             {
@@ -35,6 +37,7 @@ namespace Rem.Bot
                     state.AdminList = new HashSet<ulong>();
                 }
                 Task.WaitAll(state.PersistState());
+                state.Version = version;
                 return state;
             }
             catch (Exception)
@@ -45,6 +48,7 @@ namespace Rem.Bot
                     AdminList = new HashSet<ulong>()
                 };
                 Task.WaitAll(state.PersistState());
+                state.Version = version;
                 return state;
             }
         }

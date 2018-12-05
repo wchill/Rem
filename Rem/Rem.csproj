@@ -39,6 +39,7 @@
     <None Remove="Images\MemeTemplates\ScrollOfTruth.jpg" />
     <None Remove="Images\MemeTemplates\SurprisedPikachu.png" />
     <None Remove="Images\MemeTemplates\TrolleyProblem.png" />
+    <None Remove="VERSION.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -140,6 +141,9 @@
     </Content>
     <Content Include="Images\MemeTemplates\TrolleyProblem.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VERSION.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

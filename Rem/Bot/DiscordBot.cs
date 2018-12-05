@@ -20,9 +20,9 @@ namespace Rem.Bot
         private readonly BotState _state;
         private readonly SQLiteAsyncConnection _dbContext;
 
-        public DiscordBot(string configPath, string dbPath)
+        public DiscordBot(string version, string configPath, string dbPath)
         {
-            _state = BotState.Initialize(configPath);
+            _state = BotState.Initialize(version, configPath);
             _dbContext = new SQLiteAsyncConnection(dbPath);
 
             _client = new DiscordSocketClient();
@@ -98,7 +98,8 @@ namespace Rem.Bot
 
         private async Task UpdateDiscordStatus()
         {
-            await _client.SetGameAsync($"{_state.PatCount} pats given, {_state.BribeCount} mods bribed");
+            await _client.SetGameAsync($"bot version {_state.Version}");
+            // await _client.SetGameAsync($"{_state.PatCount} pats given, {_state.BribeCount} mods bribed");
         }
 
         public async Task Start()

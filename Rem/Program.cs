@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
 using Rem.Bot;
 
 namespace Rem
@@ -16,8 +14,10 @@ namespace Rem
 
         public async Task<int> MainAsync(string[] args)
         {
-            string configPath = null;
-            string dbPath = null;
+            string configPath;
+            string dbPath;
+            string version = File.ReadAllText("VERSION.txt");
+
             if (args.Length >= 2)
             {
                 configPath = args[0];
@@ -31,7 +31,7 @@ namespace Rem
 
             if (configPath == null || dbPath == null)
             {
-                Console.Error.WriteLine($"Config file and DB path are required (either as args or as environment variables)");
+                Console.Error.WriteLine("Config file and DB path are required (either as args or as environment variables)");
                 return 1;
             }
 
@@ -41,15 +41,16 @@ namespace Rem
             if (!File.Exists(configPath))
             {
                 Console.Error.WriteLine("Config file does not exist. One will be created. Please fill in the values.");
-                BotState.Initialize(configPath);
+                BotState.Initialize(version, configPath);
                 return 1;
             }
             if (!File.Exists(dbPath))
             {
                 Console.Error.WriteLine("SQLite database does not exist. One will be created.");
             }
+            Console.WriteLine($"Bot build version: {version}");
 
-            var bot = new DiscordBot(configPath, dbPath);
+            var bot = new DiscordBot(version, configPath, dbPath);
             await bot.Start();
             await Task.Delay(-1);
 
