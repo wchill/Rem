@@ -10,5 +10,6 @@ namespace Rem.Fonts
         public static readonly string MangaTemple = "Fonts/mangat.ttf";
         public static readonly string AnimeAce = "Fonts/animeace.ttf";
         public static readonly string OpenSans = "Fonts/OpenSans-Regular.ttf";
+        public static readonly string Anton = "Fonts/Anton-Regular.ttf";
     }
 }

@@ -9,14 +9,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Rem.Fonts;
 
 namespace Rem.Commands.MemeGen
 {
     public class DistractedBoyfriendMemeGen : ModuleBase
     {
-        private static readonly Font font = SystemFonts.CreateFont("Impact", 20, FontStyle.Bold);
+        private static readonly Font font = InitializeFont();
         private readonly BotState _botState;
         private readonly MemeTemplate _template;
+
+        private static Font InitializeFont()
+        {
+            var collection = new FontCollection();
+            collection.Install(FontNames.Anton, out var fontDescription);
+            return collection.CreateFont(fontDescription.FontFamily, 20);
+        }
+
         public DistractedBoyfriendMemeGen(BotState state)
         {
             _botState = state;
