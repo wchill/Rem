@@ -30,7 +30,7 @@ build:
   script:
     - echo "$VERSION_STR" > Rem/VERSION.txt
     - docker pull $IMAGE:$CI_COMMIT_REF_SLUG || true
-    - docker build --cache-from $IMAGE:$CI_COMMIT_REF_SLUG --target testrunner -t $TEST_IMAGE
+    - docker build --cache-from $IMAGE:$CI_COMMIT_REF_SLUG --target testrunner -t $TEST_IMAGE .
     - docker push $TEST_IMAGE
     - docker build --cache-from $IMAGE:$CI_COMMIT_REF_SLUG -t $IMAGE:$CI_COMMIT_SHA -t $IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $IMAGE:$CI_COMMIT_SHA
