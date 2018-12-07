@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:sdk AS build-env
+FROM microsoft/dotnet:2.2-sdk AS build-env
 
 WORKDIR /app/
 
@@ -8,19 +8,18 @@ WORKDIR /app/Rem/
 RUN dotnet restore
 
 # Copy everything else and build
-WORKDIR /app/
-COPY Rem/. ./Rem/
 WORKDIR /app/Rem/
+COPY Rem/. .
 RUN dotnet publish -c Release -o out
 
-# test application -- see: dotnet-docker-unit-testing.md
-# FROM build AS testrunner
-# WORKDIR /app/tests
-# COPY tests/. .
-# ENTRYPOINT ["dotnet", "test", "--logger:trx"]
+# Run tests
+FROM build-env AS testrunner
+WORKDIR /app/Tests
+COPY Tests/. .
+ENTRYPOINT ["dotnet", "test", "--logger:trx"]
 
 # Build runtime image
-FROM microsoft/dotnet:2.1-runtime AS runtime
+FROM microsoft/dotnet:2.2-runtime AS runtime
 WORKDIR /app/
 COPY --from=build-env /app/Rem/out .
 ENTRYPOINT ["dotnet", "Rem.dll"]

@@ -7,25 +7,55 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
   IMAGE_NAME: discord-rem
+  TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   IMAGE: $DOCKER_REGISTRY_URL/$IMAGE_NAME
 
 stages:
   - build
+  - test
+  - publish
   - deploy
 
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  
 build:
   stage: build
+  tags:
+    - docker
   before_script:
     - echo $PWD
     - apk update && apk add git
     - export VERSION_STR=$(git show -s --date=format:"%Y-%m-%d %H:%M:%S %z" --format="commit %h (%cd)" $CI_COMMIT_SHA)
   script:
     - echo "$VERSION_STR" > Rem/VERSION.txt
-    - docker pull $IMAGE:latest || true
-    - docker build --cache-from $IMAGE:latest -t $IMAGE:latest -t $IMAGE:$CI_COMMIT_REF_SLUG -t $IMAGE:$CI_COMMIT_SHA .
+    - docker pull $IMAGE:$CI_COMMIT_REF_SLUG || true
+    - docker build --cache-from $IMAGE:$CI_COMMIT_REF_SLUG --target testrunner -t $TEST_IMAGE
+    - docker push $TEST_IMAGE
+    - docker build --cache-from $IMAGE:$CI_COMMIT_REF_SLUG -t $IMAGE:$CI_COMMIT_SHA -t $IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $IMAGE:$CI_COMMIT_SHA
     - docker push $IMAGE:$CI_COMMIT_REF_SLUG
-    - docker push $IMAGE:latest
+
+test:
+  stage: test
+  tags:
+    - docker
+  script:
+    - docker pull $TEST_IMAGE
+    - docker run $TEST_IMAGE
+
+publish:
+  stage: publish
+  tags:
+    - docker
+  script:
+    - docker pull $IMAGE:$CI_COMMIT_SHA
+    - docker tag $IMAGE:$CI_COMMIT_SHA $IMAGE:production
+    - docker push $IMAGE:production
+  environment:
+    name: production
+  only:
+    - master
 
 deploy_prod:
   image: alpine:latest
