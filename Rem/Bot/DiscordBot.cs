@@ -57,7 +57,8 @@ namespace Rem.Bot
         private async Task MessageReceived(SocketMessage messageParam)
         {
             // Don't process the command if it was a System Message
-            if (!(messageParam is SocketUserMessage message)) return;
+            var message = messageParam as SocketUserMessage;
+            if (message == null) return;
 
             // Create a number to track where the prefix ends and the command begins
             var argPos = 0;
@@ -91,7 +92,7 @@ namespace Rem.Bot
                         }
 
                         break;
-                //TODO: Handle other CommandError cases
+                    //TODO: Handle other CommandError cases
                 }
             }
 

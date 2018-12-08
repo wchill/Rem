@@ -37,7 +37,7 @@ namespace Rem.Bot
                 return state;
             }
             //TODO: Handling of exception needed.
-            catch (ArgumentException e)
+            catch (Exception e)
             {
                 Console.Error.WriteLine("Failed to read text from {0} with error: {1}", filePath, e);
                 var state = new BotState
