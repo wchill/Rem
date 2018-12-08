@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Rem.Attributes;
 using Rem.Bot;
 
 namespace Rem.Commands
@@ -12,6 +8,7 @@ namespace Rem.Commands
     public class AdminModule : ModuleBase
     {
         private readonly BotState _botState;
+
         public AdminModule(BotState state)
         {
             _botState = state;

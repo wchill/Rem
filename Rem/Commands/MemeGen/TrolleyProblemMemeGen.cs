@@ -1,13 +1,8 @@
-﻿using Discord.Commands;
-using Rem.Bot;
-using SixLabors.Fonts;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.Primitives;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
+using Discord.Commands;
+using Rem.Bot;
 
 namespace Rem.Commands.MemeGen
 {
@@ -15,6 +10,7 @@ namespace Rem.Commands.MemeGen
     {
         private readonly BotState _botState;
         private readonly MemeTemplate _template;
+
         public TrolleyProblemMemeGen(BotState state)
         {
             _botState = state;

@@ -1,14 +1,12 @@
-﻿using Discord.Commands;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Discord.Commands;
 using Rem.Bot;
 using Rem.Fonts;
 using SixLabors.Fonts;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.Primitives;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rem.Commands.MemeGen
 {
@@ -16,6 +14,7 @@ namespace Rem.Commands.MemeGen
     {
         private readonly BotState _botState;
         private readonly MemeTemplate _template;
+
         public KomiPaperMemeGen(BotState state)
         {
             _botState = state;

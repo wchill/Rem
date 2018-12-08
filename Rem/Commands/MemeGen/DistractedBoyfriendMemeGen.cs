@@ -1,15 +1,12 @@
-﻿using Discord.Commands;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Discord.Commands;
 using Rem.Bot;
+using Rem.Fonts;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Rem.Fonts;
 
 namespace Rem.Commands.MemeGen
 {
@@ -37,7 +34,6 @@ namespace Rem.Commands.MemeGen
                         Pen = Pens.Solid(Rgba32.Black, 2),
                         Font = font
                     }, new ImageBoundingBox(1338, 703, 500, 500)),
-
                 new MultiBoundingBox(
                     new TextBoundingBox(1874, 829, 440, 260)
                     {
@@ -54,7 +50,8 @@ namespace Rem.Commands.MemeGen
                     }, new ImageBoundingBox(487, 876, 500, 500)));
         }
 
-        [Command("distractedbf"), Summary("Disloyal man walking with his girlfriend and looking amazed at another seductive girl")]
+        [Command("distractedbf"),
+         Summary("Disloyal man walking with his girlfriend and looking amazed at another seductive girl")]
         public async Task GenerateDistractedBfMeme(string guy, string girlfriend, string otherGirl)
         {
             using (Context.Channel.EnterTypingState())

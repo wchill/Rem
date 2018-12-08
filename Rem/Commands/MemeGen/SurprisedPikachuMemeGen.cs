@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Discord.Commands;
 using Rem.Bot;
-using Rem.Fonts;
 using SixLabors.Fonts;
 using SixLabors.Primitives;
 
@@ -15,6 +13,7 @@ namespace Rem.Commands.MemeGen
         private static readonly Font font = new Font(TextBoundingBox.DefaultFont, 40);
         private readonly BotState _botState;
         private readonly MemeTemplate _template;
+
         public SurprisedPikachuMemeGen(BotState state)
         {
             _botState = state;

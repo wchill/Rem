@@ -1,14 +1,12 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using MathNet.Numerics.LinearAlgebra;
+using Rem.Fonts;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rem.Fonts;
 
 namespace Rem.Commands.MemeGen
 {
@@ -16,12 +14,12 @@ namespace Rem.Commands.MemeGen
     {
         public static readonly Font DefaultFont = InitializeDefaultFont();
 
-        public IPen<Rgba32> Pen { get; set; } = null;
+        public IPen<Rgba32> Pen { get; set; }
         public IBrush<Rgba32> Brush { get; set; } = Brushes.Solid(Rgba32.Black);
         public Font Font { get; set; } = DefaultFont;
         public bool CenterWidth { get; set; } = true;
         public bool CenterHeight { get; set; } = true;
-        public bool PreferNoScaling { get; set; } = false;
+        public bool PreferNoScaling { get; set; }
 
         static Font InitializeDefaultFont()
         {
@@ -32,7 +30,6 @@ namespace Rem.Commands.MemeGen
 
         public TextBoundingBox()
         {
-
         }
 
         public TextBoundingBox(float x, float y, float w, float h)
@@ -78,7 +75,9 @@ namespace Rem.Commands.MemeGen
             var targetWidth = MaxWidth;
             var targetHeight = MaxHeight;
 
+            //Not used
             var targetMinHeight = targetHeight * 0.75f;
+
             var scaledFont = Font;
 
             var size = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
@@ -93,6 +92,8 @@ namespace Rem.Commands.MemeGen
                     return scaledFont;
                 }
             }
+
+            //Not used
             var longestWord = text.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                 .Select(w => TextMeasurer.Measure(w, new RendererOptions(scaledFont)
                 {
@@ -100,7 +101,7 @@ namespace Rem.Commands.MemeGen
                 })).OrderByDescending(s => s.Width).First();
 
             var scaleFactor = scaledFont.Size / 2;
-            var minScaleFactor = 0.1f;
+            const float minScaleFactor = 0.1f;
 
             if (size.Height < targetHeight && size.Width < targetWidth)
             {
@@ -114,11 +115,9 @@ namespace Rem.Commands.MemeGen
                             WrappingWidth = targetWidth
                         });
 
-                        if (size.Height > targetHeight || size.Width > targetWidth)
-                        {
-                            scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
-                            scaleFactor = Math.Max(minScaleFactor, scaleFactor / 2);
-                        }
+                        if (!(size.Height > targetHeight) && !(size.Width > targetWidth)) continue;
+                        scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
+                        scaleFactor = Math.Max(minScaleFactor, scaleFactor / 2);
                     }
                 }
             }
@@ -134,13 +133,12 @@ namespace Rem.Commands.MemeGen
                             WrappingWidth = targetWidth
                         });
 
-                        if (size.Height < targetHeight && size.Width < targetWidth)
-                        {
-                            scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
-                            scaleFactor = Math.Max(minScaleFactor, scaleFactor / 2);
-                        }
+                        if (!(size.Height < targetHeight) || !(size.Width < targetWidth)) continue;
+                        scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
+                        scaleFactor = Math.Max(minScaleFactor, scaleFactor / 2);
                     }
                 }
+
                 scaledFont = new Font(scaledFont, scaledFont.Size - (scaleFactor * 2));
             }
 
@@ -153,6 +151,7 @@ namespace Rem.Commands.MemeGen
             {
                 throw new ArgumentException("Unable to fit input into meme because it was too long.");
             }
+
             return scaledFont;
         }
     }

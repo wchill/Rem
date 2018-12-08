@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using SixLabors.ImageSharp.PixelFormats;
@@ -17,18 +15,19 @@ namespace Rem.Commands.MemeGen
 
         public override PointF TopLeft
         {
-            get { return GetBoundingBox().TopLeft; }
+            get => GetBoundingBox().TopLeft;
             set
             {
                 foreach (var box in _boundingBoxes)
                 {
                     box.TopLeft = value;
                 }
-            } 
+            }
         }
+
         public override PointF TopRight
         {
-            get { return GetBoundingBox().TopRight; }
+            get => GetBoundingBox().TopRight;
             set
             {
                 foreach (var box in _boundingBoxes)
@@ -37,9 +36,10 @@ namespace Rem.Commands.MemeGen
                 }
             }
         }
+
         public override PointF BottomLeft
         {
-            get { return GetBoundingBox().BottomLeft; }
+            get => GetBoundingBox().BottomLeft;
             set
             {
                 foreach (var box in _boundingBoxes)
@@ -48,9 +48,10 @@ namespace Rem.Commands.MemeGen
                 }
             }
         }
+
         public override PointF BottomRight
         {
-            get { return GetBoundingBox().BottomRight; }
+            get => GetBoundingBox().BottomRight;
             set
             {
                 foreach (var box in _boundingBoxes)
@@ -59,9 +60,10 @@ namespace Rem.Commands.MemeGen
                 }
             }
         }
+
         public override float Padding
         {
-            get { return GetBoundingBox().Padding; }
+            get => GetBoundingBox().Padding;
             set
             {
                 foreach (var box in _boundingBoxes)
@@ -70,9 +72,10 @@ namespace Rem.Commands.MemeGen
                 }
             }
         }
+
         public override IReadOnlyList<Rectangle> Masks
         {
-            get { return GetBoundingBox().Masks; }
+            get => GetBoundingBox().Masks;
             set
             {
                 foreach (var box in _boundingBoxes)
@@ -84,18 +87,18 @@ namespace Rem.Commands.MemeGen
 
         public MultiBoundingBox() : this(0, 0, 0, 0)
         {
-
         }
 
-        public MultiBoundingBox(float x, float y, float w, float h) : this(x, y, w, h, new TextBoundingBox(), new ImageBoundingBox())
+        public MultiBoundingBox(float x, float y, float w, float h) : this(x, y, w, h, new TextBoundingBox(),
+            new ImageBoundingBox())
         {
-
         }
 
         public MultiBoundingBox(params BaseBoundingBox[] boundingBoxes)
         {
             _boundingBoxes = boundingBoxes;
         }
+
         public MultiBoundingBox(float x, float y, float w, float h, params BaseBoundingBox[] boundingBoxes)
         {
             _boundingBoxes = boundingBoxes;
@@ -130,21 +133,15 @@ namespace Rem.Commands.MemeGen
             _lastInput = input;
             foreach (var box in _boundingBoxes)
             {
-                if (box.CanHandleAsync(input).Result)
-                {
-                    box.SetInput(input);
-                    _currentSelectedBox = box;
-                }
+                if (!box.CanHandleAsync(input).Result) continue;
+                box.SetInput(input);
+                _currentSelectedBox = box;
             }
         }
 
         private BaseBoundingBox GetBoundingBox()
         {
-            if (_currentSelectedBox == null)
-            {
-                return _boundingBoxes[0];
-            }
-            return _currentSelectedBox;
+            return _currentSelectedBox ?? _boundingBoxes[0];
         }
     }
 }

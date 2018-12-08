@@ -1,18 +1,16 @@
-﻿using Discord.Commands;
-using Rem.Bot;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord.Commands;
+using Rem.Bot;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Rem.Commands.MemeGen
 {
     public class MemeTemplate
     {
-        private static readonly string ImageFolder = @"Images/MemeTemplates/";
+        private const string ImageFolder = @"Images/MemeTemplates/";
         private readonly string _imagePath;
         private readonly BaseBoundingBox[] _boundingBoxes;
 
@@ -47,7 +45,8 @@ namespace Rem.Commands.MemeGen
                     {
                         img2.Mutate(ctx => ctx.CreateLayerFromBoundingBox(_boundingBoxes[i], inputs[i]));
                     }
-                    var filename = Guid.NewGuid().ToString() + ".png";
+
+                    var filename = Guid.NewGuid() + ".png";
                     img2.Save(filename);
                     return filename;
                 }

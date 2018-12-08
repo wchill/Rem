@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Rem.Bot;
-using Discord;
 
 namespace Rem.Commands
 {
@@ -20,7 +20,8 @@ namespace Rem.Commands
         [Command("meme"), Summary("Get list of generatable memes")]
         public async Task GetAllMemeCommands()
         {
-            var commands = _commandService.Commands.Where(ci => ci.Module.Name.Contains("MemeGen")).OrderBy(ci => ci.Name).ToArray();
+            var commands = _commandService.Commands.Where(ci => ci.Module.Name.Contains("MemeGen"))
+                .OrderBy(ci => ci.Name).ToArray();
 
             var builder = new EmbedBuilder();
 
@@ -38,7 +39,8 @@ namespace Rem.Commands
         [Command("meme"), Summary("Get help for a meme")]
         public async Task GetMemeCommand(string meme)
         {
-            var command = _commandService.Commands.Where(ci => ci.Module.Name.Contains("MemeGen") && ci.Name == meme).FirstOrDefault();
+            var command =
+                _commandService.Commands.FirstOrDefault(ci => ci.Module.Name.Contains("MemeGen") && ci.Name == meme);
             if (command == null)
             {
                 await ReplyAsync("That meme doesn't exist.");
@@ -50,7 +52,8 @@ namespace Rem.Commands
             builder.WithTitle(meme);
             builder.WithColor(0, 255, 0);
             builder.WithDescription(command.Summary);
-            builder.AddField("Usage", $"{_botState.Prefix}{command.Name} <{string.Join("> <", command.Parameters.Select(p => p.Name).ToArray())}>");
+            builder.AddField("Usage",
+                $"{_botState.Prefix}{command.Name} <{string.Join("> <", command.Parameters.Select(p => p.Name).ToArray())}>");
 
             await ReplyAsync("", embed: builder.Build());
         }

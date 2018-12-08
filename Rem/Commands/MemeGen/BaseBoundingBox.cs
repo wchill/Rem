@@ -1,17 +1,17 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Threading.Tasks;
+using MathNet.Numerics.LinearAlgebra;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rem.Commands.MemeGen
 {
     public abstract class BaseBoundingBox
     {
-        protected string _lastInput = null;
+        protected string _lastInput;
 
         public virtual PointF TopLeft { get; set; }
         public virtual PointF TopRight { get; set; }
@@ -20,84 +20,42 @@ namespace Rem.Commands.MemeGen
         public virtual float Padding { get; set; }
         public virtual IReadOnlyList<Rectangle> Masks { get; set; } = new List<Rectangle>();
 
-        public float WidthTop
-        {
-            get
-            {
-                return TopRight.X - TopLeft.X - (2 * Padding);
-            }
-        }
+        public float WidthTop => TopRight.X - TopLeft.X - (2 * Padding);
+                                            
+        public float WidthBottom => BottomRight.X - BottomLeft.X - (2 * Padding);
 
-        public float WidthBottom
-        {
-            get
-            {
-                return BottomRight.X - BottomLeft.X - (2 * Padding);
-            }
-        }
+        public float HeightLeft => BottomLeft.Y - TopLeft.Y - (2 * Padding);
 
-        public float HeightLeft
-        {
-            get
-            {
-                return BottomLeft.Y - TopLeft.Y - (2 * Padding);
-            }
-        }
+        public float HeightRight => BottomRight.Y - TopRight.Y - (2 * Padding);
 
-        public float HeightRight
-        {
-            get
-            {
-                return BottomRight.Y - TopRight.Y - (2 * Padding);
-            }
-        }
+        public float MaxWidth => Math.Max(WidthTop, WidthBottom);
 
-        public float MaxWidth
-        {
-            get
-            {
-                return Math.Max(WidthTop, WidthBottom);
-            }
-        }
+        public float MaxHeight => Math.Max(HeightLeft, HeightRight);
 
-        public float MaxHeight
-        {
-            get
-            {
-                return Math.Max(HeightLeft, HeightRight);
-            }
-        }
+        public Point BoundingBoxTopLeft => 
+            new Point((int) Math.Min(TopLeft.X, BottomLeft.X), (int) Math.Min(TopLeft.Y, TopRight.Y));
 
-        public Point BoundingBoxTopLeft
-        {
-            get
-            {
-                return new Point((int)Math.Min(TopLeft.X, BottomLeft.X), (int)Math.Min(TopLeft.Y, TopRight.Y));
-            }
-        }
-
-        public Point BoundingBoxBottomRight
-        {
-            get
-            {
-                return new Point((int)Math.Max(TopRight.X, BottomRight.X), (int)Math.Max(BottomLeft.Y, BottomRight.Y));
-            }
-        }
+        public Point BoundingBoxBottomRight => 
+            new Point((int) Math.Max(TopRight.X, BottomRight.X), (int) Math.Max(BottomLeft.Y, BottomRight.Y));
 
         public abstract Task<bool> CanHandleAsync(string input);
         internal abstract Task<Matrix<float>> ApplyAsyncInternal(IImageProcessingContext<Rgba32> context);
+
         public void Apply(IImageProcessingContext<Rgba32> context)
         {
             var transformMatrix = ApplyAsyncInternal(context).Result;
             ProjectLayerOntoSurface(context, transformMatrix);
         }
+
         public virtual void SetInput(string input)
         {
             _lastInput = input;
         }
+
         protected Matrix<float> GetProjectiveTransformationMatrix(float? width = null, float? height = null)
         {
-            var s = MapBasisToPoints(new PointF(0, 0), new PointF(width ?? MaxWidth, 0), new PointF(0, height ?? MaxHeight), new PointF(width ?? MaxWidth, height ?? MaxHeight));
+            var s = MapBasisToPoints(new PointF(0, 0), new PointF(width ?? MaxWidth, 0),
+                new PointF(0, height ?? MaxHeight), new PointF(width ?? MaxWidth, height ?? MaxHeight));
             var d = MapBasisToPoints(
                 TopLeft + new PointF(Padding, Padding),
                 TopRight + new PointF(-Padding, Padding),
@@ -110,13 +68,13 @@ namespace Rem.Commands.MemeGen
 
         protected void ProjectLayerOntoSurface(IImageProcessingContext<Rgba32> context, Matrix<float> transformMatrix)
         {
-            var matrix4x4 = new System.Numerics.Matrix4x4(
+            var matrix4X4 = new Matrix4x4(
                 transformMatrix[0, 0], transformMatrix[1, 0], 0, transformMatrix[2, 0],
                 transformMatrix[0, 1], transformMatrix[1, 1], 0, transformMatrix[2, 1],
                 0, 0, 1, 0,
                 transformMatrix[0, 2], transformMatrix[1, 2], 0, transformMatrix[2, 2]
             );
-            context.Transform(matrix4x4, KnownResamplers.Lanczos3);
+            context.Transform(matrix4X4, KnownResamplers.Lanczos3);
             foreach (var mask in Masks)
             {
                 context.Opacity(0, mask);
@@ -146,20 +104,20 @@ namespace Rem.Commands.MemeGen
 
         private static Matrix<float> MapBasisToPoints(PointF p1, PointF p2, PointF p3, PointF p4)
         {
-            var A = Matrix<float>.Build.DenseOfArray(new float[,]
+            var A = Matrix<float>.Build.DenseOfArray(new[,]
             {
                 {p1.X, p2.X, p3.X},
                 {p1.Y, p2.Y, p3.Y},
                 {1, 1, 1}
             });
-            var b = Vector<float>.Build.Dense(new float[] { p4.X, p4.Y, 1 });
+            var b = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.Dense(new[] {p4.X, p4.Y, 1});
             var aj = AdjugateMatrix(A);
             var v = aj.Multiply(b);
-            var m = Matrix<float>.Build.DenseOfArray(new float[,]
+            var m = Matrix<float>.Build.DenseOfArray(new[,]
             {
-                {v[0], 0, 0 },
-                {0, v[1], 0 },
-                {0, 0, v[2] }
+                {v[0], 0, 0},
+                {0, v[1], 0},
+                {0, 0, v[2]}
             });
             return A.Multiply(m);
         }

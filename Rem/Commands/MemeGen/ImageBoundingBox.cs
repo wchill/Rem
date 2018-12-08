@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using RestSharp;
@@ -41,12 +40,12 @@ namespace Rem.Commands.MemeGen
             BlenderMode = PixelBlenderMode.Normal,
             BlendPercentage = 1.0f
         };
+
         public ImageScalingMode PortraitScalingMode { get; set; } = ImageScalingMode.FitWithLetterbox;
         public ImageScalingMode LandscapeScalingMode { get; set; } = ImageScalingMode.FitWithLetterbox;
 
         public ImageBoundingBox()
         {
-
         }
 
         public ImageBoundingBox(float x, float y, float w, float h)
@@ -66,7 +65,7 @@ namespace Rem.Commands.MemeGen
             }
 
             var result = Uri.TryCreate(input, UriKind.Absolute, out var uriResult)
-                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                         && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
             if (!result)
             {
                 return false;
@@ -87,7 +86,7 @@ namespace Rem.Commands.MemeGen
         internal override async Task<Matrix<float>> ApplyAsyncInternal(IImageProcessingContext<Rgba32> context)
         {
             var image = await GetImageFromUrl(_lastInput);
-            var scalingMode = (image.Width / (double)image.Height) >= 1.0 ? LandscapeScalingMode : PortraitScalingMode;
+            var scalingMode = image.Width / (double) image.Height >= 1.0 ? LandscapeScalingMode : PortraitScalingMode;
             switch (scalingMode)
             {
                 case ImageScalingMode.None:
@@ -115,8 +114,8 @@ namespace Rem.Commands.MemeGen
 
         private Matrix<float> ApplyFillFit(IImageProcessingContext<Rgba32> context, Image<Rgba32> image)
         {
-            var imageAspectRatio = image.Width / (double)image.Height;
-            var boxAspectRatio = MaxWidth / (double)MaxHeight;
+            var imageAspectRatio = image.Width / (double) image.Height;
+            var boxAspectRatio = MaxWidth / (double) MaxHeight;
             double scaledWidth = image.Width;
             double scaledHeight = image.Height;
             var drawingPoint = new Point(0, 0);
@@ -125,24 +124,25 @@ namespace Rem.Commands.MemeGen
                 // box is wider than image
                 scaledHeight = image.Width / boxAspectRatio;
                 scaledWidth = image.Width;
-                drawingPoint = new Point(0, (int)((scaledHeight - image.Height) / 2));
+                drawingPoint = new Point(0, (int) ((scaledHeight - image.Height) / 2));
             }
             else if (boxAspectRatio < imageAspectRatio)
             {
                 // image is wider than box
                 scaledWidth = image.Height * boxAspectRatio;
                 scaledHeight = image.Height;
-                drawingPoint = new Point((int)((scaledWidth - image.Width) / 2), 0);
+                drawingPoint = new Point((int) ((scaledWidth - image.Width) / 2), 0);
             }
-            context.Resize((int)scaledWidth, (int)scaledHeight);
+
+            context.Resize((int) scaledWidth, (int) scaledHeight);
             context.DrawImage(GraphicsOptions, image, drawingPoint);
-            return GetProjectiveTransformationMatrix((float)scaledWidth, (float)scaledHeight);
+            return GetProjectiveTransformationMatrix((float) scaledWidth, (float) scaledHeight);
         }
 
         private Matrix<float> ApplyFitWithLetterbox(IImageProcessingContext<Rgba32> context, Image<Rgba32> image)
         {
-            var imageAspectRatio = image.Width / (double)image.Height;
-            var boxAspectRatio = MaxWidth / (double)MaxHeight;
+            var imageAspectRatio = image.Width / (double) image.Height;
+            var boxAspectRatio = MaxWidth / (double) MaxHeight;
             double scaledWidth = image.Width;
             double scaledHeight = image.Height;
             var drawingPoint = new Point(0, 0);
@@ -151,18 +151,19 @@ namespace Rem.Commands.MemeGen
                 // box is wider than image
                 scaledWidth = image.Height * boxAspectRatio;
                 scaledHeight = image.Height;
-                drawingPoint = new Point((int)((scaledWidth - image.Width) / 2), 0);
+                drawingPoint = new Point((int) ((scaledWidth - image.Width) / 2), 0);
             }
             else if (boxAspectRatio < imageAspectRatio)
             {
                 // image is wider than box
                 scaledHeight = image.Width / boxAspectRatio;
                 scaledWidth = image.Width;
-                drawingPoint = new Point(0, (int)((scaledHeight - image.Height) / 2));
+                drawingPoint = new Point(0, (int) ((scaledHeight - image.Height) / 2));
             }
+
             context.Resize((int) scaledWidth, (int) scaledHeight);
             context.DrawImage(GraphicsOptions, image, drawingPoint);
-            return GetProjectiveTransformationMatrix((float)scaledWidth, (float)scaledHeight);
+            return GetProjectiveTransformationMatrix((float) scaledWidth, (float) scaledHeight);
         }
 
         private Matrix<float> ApplyStretchFit(IImageProcessingContext<Rgba32> context, Image<Rgba32> image)
@@ -184,6 +185,7 @@ namespace Rem.Commands.MemeGen
                     context.DrawImage(GraphicsOptions, image, new Point(i * image.Width, j * image.Height));
                 }
             }
+
             return GetProjectiveTransformationMatrix(MaxWidth, MaxHeight);
         }
 
@@ -204,8 +206,8 @@ namespace Rem.Commands.MemeGen
                 return image;
             }
 
-            var result = Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
-                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+            var result = Uri.TryCreate(url, UriKind.Absolute, out var uriResult) && 
+                         (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
             if (!result)
             {
                 throw new ArgumentException("Invalid URL provided.");

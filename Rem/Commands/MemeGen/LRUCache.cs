@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Rem.Commands.MemeGen
 {
     public class LRUCache<K, V>
     {
-        private int capacity;
-        private Dictionary<K, LinkedListNode<LRUCacheItem<K, V>>> cacheMap = new Dictionary<K, LinkedListNode<LRUCacheItem<K, V>>>();
-        private LinkedList<LRUCacheItem<K, V>> lruList = new LinkedList<LRUCacheItem<K, V>>();
+        private readonly int _capacity;
+
+        private Dictionary<K, LinkedListNode<LRUCacheItem<K, V>>> cacheMap =
+            new Dictionary<K, LinkedListNode<LRUCacheItem<K, V>>>();
+
+        private readonly LinkedList<LRUCacheItem<K, V>> _lruList = new LinkedList<LRUCacheItem<K, V>>();
 
         public LRUCache(int capacity)
         {
-            this.capacity = capacity;
+            _capacity = capacity;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool TryGet(K key, out V value)
         {
-            LinkedListNode<LRUCacheItem<K, V>> node;
-            if (cacheMap.TryGetValue(key, out node))
+            if (cacheMap.TryGetValue(key, out var node))
             {
-                value = node.Value.value;
-                lruList.Remove(node);
-                lruList.AddLast(node);
+                value = node.Value.Value;
+                _lruList.Remove(node);
+                _lruList.AddLast(node);
                 return true;
             }
+
             value = default(V);
             return false;
         }
@@ -36,28 +37,28 @@ namespace Rem.Commands.MemeGen
         {
             if (cacheMap.TryGetValue(key, out var existingNode))
             {
-                lruList.Remove(existingNode);
+                _lruList.Remove(existingNode);
             }
 
-            if (cacheMap.Count >= capacity)
+            if (cacheMap.Count >= _capacity)
             {
                 RemoveFirst();
             }
 
-            LRUCacheItem<K, V> cacheItem = new LRUCacheItem<K, V>(key, val);
-            LinkedListNode<LRUCacheItem<K, V>> node = new LinkedListNode<LRUCacheItem<K, V>>(cacheItem);
-            lruList.AddLast(node);
+            var cacheItem = new LRUCacheItem<K, V>(key, val);
+            var node = new LinkedListNode<LRUCacheItem<K, V>>(cacheItem);
+            _lruList.AddLast(node);
             cacheMap.Add(key, node);
         }
 
         private void RemoveFirst()
         {
             // Remove from LRUPriority
-            LinkedListNode<LRUCacheItem<K, V>> node = lruList.First;
-            lruList.RemoveFirst();
+            var node = _lruList.First;
+            _lruList.RemoveFirst();
 
             // Remove from cache
-            cacheMap.Remove(node.Value.key);
+            cacheMap.Remove(node.Value.Key);
         }
     }
 
@@ -65,10 +66,11 @@ namespace Rem.Commands.MemeGen
     {
         public LRUCacheItem(K k, V v)
         {
-            key = k;
-            value = v;
+            Key = k;
+            Value = v;
         }
-        public K key;
-        public V value;
+
+        public readonly K Key;
+        public readonly V Value;
     }
 }

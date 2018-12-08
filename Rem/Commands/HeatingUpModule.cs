@@ -1,44 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using Rem.Bot;
-using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using Image = SixLabors.ImageSharp.Image;
 
 namespace Rem.Commands
 {
     public class HeatingUpModule : ModuleBase
     {
         private readonly BotState _botState;
-        private static Image<Rgba32>[] Digits;
-        private static Image<Rgba32> HeatingUpImg;
-        
+        private static Image<Rgba32>[] _digits;
+        private static Image<Rgba32> _heatingUpImg;
+
         public HeatingUpModule(BotState state)
         {
             _botState = state;
-            if (Digits == null)
+            if (_digits == null)
             {
-                Digits = new Image<Rgba32>[10];
-                
+                _digits = new Image<Rgba32>[10];
+
                 for (var i = 0; i < 10; i++)
                 {
-                    Digits[i] = Image.Load(@"Images/HeatingUp/" + $"{i}.png");
+                    _digits[i] = Image.Load(@"Images/HeatingUp/" + $"{i}.png");
                 }
             }
 
-            if (HeatingUpImg == null)
+            if (_heatingUpImg == null)
             {
-                HeatingUpImg = Image.Load(@"Images/HeatingUp/heatingup.png");
+                _heatingUpImg = Image.Load(@"Images/HeatingUp/heatingup.png");
             }
         }
 
@@ -77,28 +69,31 @@ namespace Rem.Commands
             {
                 num = 99;
             }
+
             var tens = num / 10;
             var ones = num % 10;
 
             var maxWidth = 54;
             var maxHeight = 54;
 
-            var tensImg = Digits[tens];
-            var onesImg = Digits[ones];
+            var tensImg = _digits[tens];
+            var onesImg = _digits[ones];
 
             var combinedWidth = tensImg.Width + onesImg.Width + 2;
-            var scaleFactorWidth = maxWidth / (double)combinedWidth;
-            var scaleFactorHeight = maxHeight / (double)Math.Max(tensImg.Height, onesImg.Height);
+            var scaleFactorWidth = maxWidth / (double) combinedWidth;
+            var scaleFactorHeight = maxHeight / (double) Math.Max(tensImg.Height, onesImg.Height);
 
             var scaleFactor = Math.Min(scaleFactorHeight, scaleFactorWidth);
-            var finalHeight = (int)(Math.Max(tensImg.Height, onesImg.Height) * scaleFactor);
-            var finalWidth = (int)(combinedWidth * scaleFactor);
+            var finalHeight = (int) (Math.Max(tensImg.Height, onesImg.Height) * scaleFactor);
+            var finalWidth = (int) (combinedWidth * scaleFactor);
 
-            var img = HeatingUpImg.Clone();
+            var img = _heatingUpImg.Clone();
             var tensScaled = tensImg.Clone();
-            tensScaled.Mutate(i => i.Resize((int)(tensScaled.Width * scaleFactor), (int)(tensScaled.Height * scaleFactor)));
+            tensScaled.Mutate(i =>
+                i.Resize((int) (tensScaled.Width * scaleFactor), (int) (tensScaled.Height * scaleFactor)));
             var onesScaled = onesImg.Clone();
-            onesScaled.Mutate(i => i.Resize((int)(onesScaled.Width * scaleFactor), (int)(onesScaled.Height * scaleFactor)));
+            onesScaled.Mutate(i =>
+                i.Resize((int) (onesScaled.Width * scaleFactor), (int) (onesScaled.Height * scaleFactor)));
 
             var startX = 507 + (maxWidth - finalWidth) / 2;
             var startX2 = 507 + maxWidth - ((maxWidth - finalWidth) / 2 + onesScaled.Width);
