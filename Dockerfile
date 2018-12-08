@@ -8,14 +8,11 @@ COPY MemeGenerator/*.csproj ./MemeGenerator/
 WORKDIR /app/Rem/
 RUN dotnet restore
 
-# Temporary until this gets integrated into the bot
-WORKDIR /app/MemeGenerator/
-RUN dotnet restore
-
 # Copy everything else and build
 WORKDIR /app/
 COPY Rem/. ./Rem/
 COPY MemeGenerator/. ./MemeGenerator/
+WORKDIR /app/Rem/
 RUN dotnet publish -c Release -o out
 
 # Run tests
