@@ -11,7 +11,8 @@ namespace Rem.Bot
         // These values cannot change without restarting bot
         public string ClientSecret { get; set; }
 
-        [JsonIgnore] public string Version { get; private set; }
+        [JsonIgnore] 
+        public string Version { get; private set; }
 
         // These values can change
         public string Prefix { get; set; }
@@ -20,7 +21,8 @@ namespace Rem.Bot
         public HashSet<ulong> AdminList { get; set; }
         public string TranslatorApiKey { get; set; }
 
-        [JsonIgnore] public string FilePath { get; private set; }
+        [JsonIgnore] 
+        public string FilePath { get; private set; }
 
         public static BotState Initialize(string version, string filePath)
         {
