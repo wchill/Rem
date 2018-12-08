@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Rem.Fonts
+﻿namespace Rem.Fonts
 {
     public static class FontNames
     {
         // TODO: Make this not shit
-        public static readonly string MangaTemple = "Fonts/mangat.ttf";
-        public static readonly string AnimeAce = "Fonts/animeace.ttf";
-        public static readonly string OpenSans = "Fonts/OpenSans-Regular.ttf";
-        public static readonly string Anton = "Fonts/Anton-Regular.ttf";
+        public const string MangaTemple = "Fonts/mangat.ttf";
+        public const string AnimeAce = "Fonts/animeace.ttf";
+        public const string OpenSans = "Fonts/OpenSans-Regular.ttf";
+        public const string Anton = "Fonts/Anton-Regular.ttf";
     }
 }
