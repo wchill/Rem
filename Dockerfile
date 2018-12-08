@@ -4,12 +4,18 @@ WORKDIR /app/
 
 # Copy csproj and restore as distinct layers
 COPY Rem/*.csproj ./Rem/
+COPY MemeGenerator/*.csproj ./MemeGenerator/
 WORKDIR /app/Rem/
 RUN dotnet restore
 
+# Temporary until this gets integrated into the bot
+WORKDIR /app/MemeGenerator/
+RUN dotnet restore
+
 # Copy everything else and build
-WORKDIR /app/Rem/
-COPY Rem/. .
+WORKDIR /app/
+COPY Rem/. ./Rem/
+COPY MemeGenerator/. ./MemeGenerator/
 RUN dotnet publish -c Release -o out
 
 # Run tests
