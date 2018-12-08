@@ -64,7 +64,7 @@ namespace MemeGenerator.Fonts
 
         public static Font GetDefaultFont()
         {
-            return GetFont(AvailableFonts.Anton, 20);
+            return GetFont(AvailableFonts.OpenSans, 20);
         }
     }
 }

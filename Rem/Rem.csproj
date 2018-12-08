@@ -150,12 +150,16 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.0-beta" />
     <PackageReference Include="Fastenshtein" Version="1.0.0.5" />
-    <PackageReference Include="MathNet.Numerics" Version="4.5.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="RestSharp" Version="106.4.2" />
+    <PackageReference Include="MathNet.Numerics" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="RestSharp" Version="106.5.4" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0005" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MemeGenerator\MemeGenerator.csproj" />
   </ItemGroup>
 
 </Project>

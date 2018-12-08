@@ -3,6 +3,7 @@ using System.Linq;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
 
 namespace MemeGenerator
 {
@@ -11,22 +12,22 @@ namespace MemeGenerator
         private readonly Font _font;
         private readonly IPen<Rgba32> _pen;
         private readonly IBrush<Rgba32> _brush;
-        private readonly bool _centerWidth;
-        private readonly bool _centerHeight;
+        private readonly HorizontalAlignment _horizontalAlignment;
+        private readonly VerticalAlignment _verticalAlignment;
         private readonly bool _preferNoScaling;
 
-        public MemeTextRenderer(Font font, IPen<Rgba32> pen, IBrush<Rgba32> brush, bool centerWidth, bool centerHeight,
+        public MemeTextRenderer(Font font, IPen<Rgba32> pen, IBrush<Rgba32> brush, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
             bool preferNoScaling)
         {
             _font = font;
             _pen = pen;
             _brush = brush;
-            _centerWidth = centerWidth;
-            _centerHeight = centerHeight;
+            _horizontalAlignment = horizontalAlignment;
+            _verticalAlignment = verticalAlignment;
             _preferNoScaling = preferNoScaling;
         }
 
-        public Font GetAdjustedFont(float width, float height, string text)
+        public Font GetAdjustedFont(int width, int height, string text)
         {
             if (_preferNoScaling && WillTextFit(width, height, text, _font))
             {
@@ -42,7 +43,27 @@ namespace MemeGenerator
             return bestFont;
         }
 
-        private static Font BinarySearchFontSize(float width, float height, string text, Font originalFont)
+        public void RenderTextToImage(IImageProcessingContext<Rgba32> context, Rectangle area, string text)
+        {
+            var width = area.Width;
+            var height = area.Height;
+            var x = area.X;
+            var y = area.Y;
+
+            var scaledFont = GetAdjustedFont(width, height, text);
+            var textGraphicOptions = new TextGraphicsOptions(true)
+            {
+                HorizontalAlignment = _horizontalAlignment,
+                VerticalAlignment = _verticalAlignment,
+                WrapTextWidth = width
+            };
+            
+            var renderY = _verticalAlignment == VerticalAlignment.Center ? height / 2 + y : y;
+
+            context.DrawText(textGraphicOptions, text, scaledFont, _brush, _pen, new PointF(x, renderY));
+        }
+
+        private Font BinarySearchFontSize(int width, int height, string text, Font originalFont)
         {
             double low = 0.1;
             double high = height;
@@ -71,14 +92,22 @@ namespace MemeGenerator
             return bestFont;
         }
 
-        private static bool WillTextFit(float width, float height, string text, Font font)
+        private RectangleF GetTextBounds(int wrapWidth, string text, Font font)
         {
-            var adjustedSizeNew = TextMeasurer.Measure(text, new RendererOptions(font)
+            return TextMeasurer.MeasureBounds(text, new RendererOptions(font)
             {
-                WrappingWidth = width
+                HorizontalAlignment = _horizontalAlignment,
+                VerticalAlignment = _verticalAlignment,
+                WrappingWidth = wrapWidth
             });
+        }
 
-            return height > adjustedSizeNew.Height && width > adjustedSizeNew.Width;
+        private bool WillTextFit(int width, int height, string text, Font font)
+        {
+            var adjustedSizeNew = GetTextBounds(width, text, font);
+
+            // Provide a little safety margin due to floating point error
+            return height * 0.95 > adjustedSizeNew.Height && width * 0.95 > adjustedSizeNew.Width;
         }
     }
 }
