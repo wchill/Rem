@@ -25,7 +25,7 @@ namespace Rem.Attributes
             IServiceProvider services)
         {
             var roles = ((SocketGuildUser) context.User).Roles;
-            //does this really just need any match?
+            //does this just need any match?
             return Task.FromResult(roles.Any(role => _roles.Contains(role.Name.ToLower())) ?
                 PreconditionResult.FromSuccess() :
                 PreconditionResult.FromError("You do not have permission to use this command."));
