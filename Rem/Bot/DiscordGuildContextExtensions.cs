@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Discord;
 
 namespace Rem.Bot
 {
     public static class DiscordGuildContextExtensions
     {
-        private static readonly string UserIdPattern = @"^<@(\d+)>$";
-        private static readonly string ChannelIdPattern = @"^<#(\d+)>$";
-        public static async Task<string> ResolveIds(this Discord.IGuild guild, string text)
+        private const string UserIdPattern = @"^<@(\d+)>$";
+        private const string ChannelIdPattern = @"^<#(\d+)>$";
+
+        public static async Task<string> ResolveIds(this IGuild guild, string text)
         {
             var words = text.Split(' ');
             for (var i = 0; i < words.Length; i++)
@@ -25,6 +24,7 @@ namespace Rem.Bot
                     {
                         continue;
                     }
+
                     var channel = await guild.GetChannelAsync(id);
                     if (channel != null)
                     {
@@ -33,11 +33,12 @@ namespace Rem.Bot
                 }
                 else if (userMatch.Success)
                 {
-                    var success = ulong.TryParse(userMatch.Groups[1].Value, out ulong id);
+                    var success = ulong.TryParse(userMatch.Groups[1].Value, out var id);
                     if (!success)
                     {
                         continue;
                     }
+
                     var user = await guild.GetUserAsync(id);
                     if (user != null)
                     {

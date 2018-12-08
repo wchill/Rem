@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SQLite;
 
 namespace Rem.Bot
 {
@@ -13,8 +10,8 @@ namespace Rem.Bot
     {
         // These values cannot change without restarting bot
         public string ClientSecret { get; set; }
-        [JsonIgnore]
-        public string Version { get; private set; }
+
+        [JsonIgnore] public string Version { get; private set; }
 
         // These values can change
         public string Prefix { get; set; }
@@ -23,8 +20,7 @@ namespace Rem.Bot
         public HashSet<ulong> AdminList { get; set; }
         public string TranslatorApiKey { get; set; }
 
-        [JsonIgnore]
-        public string FilePath { get; private set; }
+        [JsonIgnore] public string FilePath { get; private set; }
 
         public static BotState Initialize(string version, string filePath)
         {
@@ -32,16 +28,16 @@ namespace Rem.Bot
             {
                 var state = JsonConvert.DeserializeObject<BotState>(File.ReadAllText(filePath));
                 state.FilePath = filePath;
-                if (state.AdminList == null)
-                {
-                    state.AdminList = new HashSet<ulong>();
-                }
+                state.AdminList = state.AdminList ?? new HashSet<ulong>();
+
                 Task.WaitAll(state.PersistState());
                 state.Version = version;
                 return state;
             }
-            catch (Exception)
+            //TODO: Handling of exception needed.
+            catch (ArgumentException e)
             {
+                Console.Error.WriteLine("Failed to read text from {0} with error: {1}", filePath, e);
                 var state = new BotState
                 {
                     FilePath = filePath,
