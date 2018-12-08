@@ -1,3 +1,4 @@
+using MemeGenerator;
 using System;
 using Xunit;
 
