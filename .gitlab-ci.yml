@@ -13,7 +13,6 @@ variables:
 stages:
   - build
   - test
-  - publish
   - deploy
   
 build:
@@ -44,28 +43,14 @@ test:
     - docker pull $TEST_IMAGE
     - docker run $TEST_IMAGE
 
-publish:
-  stage: publish
-  tags:
-    - docker
-  script:
-    - docker pull $IMAGE:$CI_COMMIT_SHA
-    - docker tag $IMAGE:$CI_COMMIT_SHA $IMAGE:production
-    - docker push $IMAGE:production
-  environment:
-    name: production
-  only:
-    - master
-
 deploy_prod:
-  image: alpine:latest
   stage: deploy
-  variables:
-    GIT_STRATEGY: none
   tags:
     - docker
     - linux
     - internal
+  variables:
+    GIT_STRATEGY: none
   before_script:
     - apk update && apk add openssh-client
     - eval $(ssh-agent -s)
@@ -73,6 +58,9 @@ deploy_prod:
     - mkdir -p ~/.ssh
     - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
   script:
+    - docker pull $IMAGE:$CI_COMMIT_SHA
+    - docker tag $IMAGE:$CI_COMMIT_SHA $IMAGE:production
+    - docker push $IMAGE:production
     - ssh $SSH_USER_HOST "cd $DOCKER_COMPOSE_PATH && docker-compose pull && docker-compose up -d"
   environment:
     name: production
