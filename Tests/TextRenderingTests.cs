@@ -13,6 +13,7 @@ namespace Tests
     public class TextRenderingTests
     {
         [Theory]
+        [InlineData(100, 100, "")]
         [InlineData(100, 100, "test")]
         [InlineData(100, 100, "testwithalongerstring")]
         [InlineData(1000, 1000, "testwithalongerstring")]

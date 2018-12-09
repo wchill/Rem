@@ -21,6 +21,7 @@ namespace Tests
         }
 
         [Theory]
+        [InlineData(100, 100, "")]
         [InlineData(100, 100, "test")]
         [InlineData(10000, 10000, "test")]
         [InlineData(100, 100, "verylongstringwithverylongwordthathasnospacesorlinebreaksverylongstringwithverylongwordthathasnospacesorlinebreaksverylongstringwithverylongwordthathasnospacesorlinebreaks")]
@@ -34,6 +35,7 @@ namespace Tests
         }
 
         [Theory]
+        [InlineData(100, 100, "")]
         [InlineData(100, 100, "test")]
         [InlineData(10000, 10000, "test")]
         [InlineData(10000, 10000, "verylongstringwithverylongwordthathasnospacesorlinebreaksverylongstringwithverylongwordthathasnospacesorlinebreaksverylongstringwithverylongwordthathasnospacesorlinebreaks")]

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Tests
 {
-    public class ImageProcessing
+    public class ImageProjectionTests
     {
         [Fact]
         public void HelloWorldTest()

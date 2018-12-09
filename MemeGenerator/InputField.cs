@@ -8,16 +8,6 @@ using SixLabors.Primitives;
 
 namespace MemeGenerator
 {
-    public enum ImageScalingMode
-    {
-        None,
-        FillFit,
-        FitWithLetterbox,
-        StretchFit,
-        Tile,
-        Center
-    }
-
     public class InputField
     {
         public PointF TopLeft { get; }
