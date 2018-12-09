@@ -1,4 +1,4 @@
-﻿using MemeGenerator;
+using MemeGenerator;
 using System;
 using MemeGenerator.Fonts;
 using SixLabors.Fonts;
@@ -25,12 +25,12 @@ namespace Tests
             using (var canvas = new Image<Rgba32>(width + 2 * margin, height + 2 * margin))
             {
                 var font = MemeFonts.GetDefaultFont();
-                var renderer = new MemeTextRenderer(font, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, false);
+                var renderer = new TextInputRenderer(font, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, false);
                 var renderArea = new Rectangle(margin, margin, width, height);
                 canvas.Mutate(ctx =>
                 {
                     ctx.Fill(Rgba32.AliceBlue);
-                    renderer.RenderTextToImage(ctx, renderArea, text);
+                    renderer.Render(ctx, renderArea, text);
                 });
                 for (var y = 0; y < canvas.Height; y++)
                 {

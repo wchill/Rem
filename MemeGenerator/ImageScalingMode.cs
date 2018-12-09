@@ -1,4 +1,4 @@
-﻿namespace MemeGenerator
+namespace MemeGenerator
 {
     public enum ImageScalingMode
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using SixLabors.ImageSharp.PixelFormats;

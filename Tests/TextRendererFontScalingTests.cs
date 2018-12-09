@@ -16,7 +16,7 @@ namespace Tests
         public void ImpossibleTextConstraintsThrowsArgumentException(int width, int height, string text)
         {
             var originalFont = MemeFonts.GetDefaultFont();
-            var renderer = new MemeTextRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, false);
+            var renderer = new TextInputRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, false);
             Assert.Throws<ArgumentException>(() => renderer.GetAdjustedFont(width, height, text));
         }
 
@@ -30,7 +30,7 @@ namespace Tests
         public void TextConstraintsMetWithScalingEnabled(int width, int height, string text)
         {
             var originalFont = MemeFonts.GetDefaultFont();
-            var renderer = new MemeTextRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, false);
+            var renderer = new TextInputRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, false);
             renderer.GetAdjustedFont(width, height, text);
         }
 
@@ -43,7 +43,7 @@ namespace Tests
         public void ScalingNotPerformedWithLargeCanvasWhenPreferringNoScaling(int width, int height, string text)
         {
             var originalFont = new Font(MemeFonts.GetDefaultFont(), 5);
-            var renderer = new MemeTextRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, true);
+            var renderer = new TextInputRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, true);
             var newFont = renderer.GetAdjustedFont(width, height, text);
             Assert.Equal(originalFont, newFont);
         }
@@ -53,7 +53,7 @@ namespace Tests
         public void ScalingPerformedForLongTextWhenPreferringNoScaling(int width, int height, string text)
         {
             var originalFont = new Font(MemeFonts.GetDefaultFont(), 5);
-            var renderer = new MemeTextRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, true);
+            var renderer = new TextInputRenderer(originalFont, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, true);
             var newFont = renderer.GetAdjustedFont(width, height, text);
             Assert.True(originalFont.Size > newFont.Size);
         }

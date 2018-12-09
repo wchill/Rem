@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
@@ -7,7 +7,7 @@ using SixLabors.Primitives;
 
 namespace MemeGenerator
 {
-    public class MemeTextRenderer
+    public class TextInputRenderer : IInputRenderer
     {
         private readonly Font _font;
         private readonly IPen<Rgba32> _pen;
@@ -16,7 +16,7 @@ namespace MemeGenerator
         private readonly VerticalAlignment _verticalAlignment;
         private readonly bool _preferNoScaling;
 
-        public MemeTextRenderer(Font font, IPen<Rgba32> pen, IBrush<Rgba32> brush, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
+        public TextInputRenderer(Font font, IPen<Rgba32> pen, IBrush<Rgba32> brush, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
             bool preferNoScaling)
         {
             _font = font;
@@ -43,8 +43,13 @@ namespace MemeGenerator
             return bestFont;
         }
 
-        public void RenderTextToImage(IImageProcessingContext<Rgba32> context, Rectangle area, string text)
+        public bool Render(IImageProcessingContext<Rgba32> context, Rectangle area, object input)
         {
+            if (!(input is string text))
+            {
+                return false;
+            }
+
             var width = area.Width;
             var height = area.Height;
             var x = area.X;
@@ -61,12 +66,14 @@ namespace MemeGenerator
             var renderY = _verticalAlignment == VerticalAlignment.Center ? height / 2 + y : y;
 
             context.DrawText(textGraphicOptions, text, scaledFont, _brush, _pen, new PointF(x, renderY));
+
+            return true;
         }
 
         private Font BinarySearchFontSize(int width, int height, string text, Font originalFont)
         {
             double low = 0.1;
-            double high = height;
+            double high = height / 2;
 
             Font bestFont = null;
 
@@ -104,7 +111,7 @@ namespace MemeGenerator
 
         private bool WillTextFit(int width, int height, string text, Font font)
         {
-            var adjustedSizeNew = GetTextBounds(width, text, font);
+            var adjustedSizeNew = GetTextBounds((int) (width * 0.95), text, font);
 
             // Provide a little safety margin due to floating point error
             return height * 0.95 > adjustedSizeNew.Height && width * 0.95 > adjustedSizeNew.Width;

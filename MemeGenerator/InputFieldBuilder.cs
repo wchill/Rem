@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using MemeGenerator.Fonts;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
@@ -11,10 +12,15 @@ namespace MemeGenerator
 {
     public class InputFieldBuilder
     {
-        private PointF[] _corners;
-        private readonly List<PointF[]> _drawableArea;
+        private Point _topLeft;
+        private Point _topRight;
+        private Point _bottomLeft;
+        private Point _bottomRight;
         private double _paddingPercentage;
+        private readonly List<IInputRenderer> _renderers;
+        private IReadOnlyList<Point> _mask;
 
+        /*
         private bool _allowText;
         private Font _font;
         private IPen<Rgba32> _pen;
@@ -22,8 +28,7 @@ namespace MemeGenerator
         private bool _centerWidth;
         private bool _centerHeight;
         private bool _preferNoScaling;
-
-        /*
+        
         private bool _allowImage;
         private ImageScalingMode PortraitScalingMode { get; set; } = ImageScalingMode.FitWithLetterbox;
         private ImageScalingMode LandscapeScalingMode { get; set; } = ImageScalingMode.FitWithLetterbox;
@@ -31,8 +36,10 @@ namespace MemeGenerator
 
         public InputFieldBuilder()
         {
-            _drawableArea = new List<PointF[]>();
             _paddingPercentage = 0;
+            _renderers = new List<IInputRenderer>();
+
+            /*
             _allowText = false;
             _font = MemeFonts.GetDefaultFont();
             _pen = null;
@@ -41,21 +48,16 @@ namespace MemeGenerator
             _centerHeight = true;
             _preferNoScaling = false;
 
-            //_allowImage = false;
+            _allowImage = false;
+            */
         }
 
         public InputFieldBuilder WithVertices(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight)
         {
-            return WithVertices(
-                new PointF(topLeft.X, topLeft.Y),
-                new PointF(topRight.X, topRight.Y),
-                new PointF(bottomLeft.X, bottomLeft.Y),
-                new PointF(bottomRight.X, bottomRight.Y));
-        }
-
-        public InputFieldBuilder WithVertices(PointF topLeft, PointF topRight, PointF bottomLeft, PointF bottomRight)
-        {
-            _corners = new[] { topLeft, topRight, bottomLeft, bottomRight };
+            _topLeft = topLeft;
+            _topRight = topRight;
+            _bottomLeft = bottomLeft;
+            _bottomRight = bottomRight;
             return this;
         }
 
@@ -65,12 +67,23 @@ namespace MemeGenerator
             return this;
         }
 
-        public InputFieldBuilder WithMask(PointF[] shape)
+        public InputFieldBuilder WithMask(IReadOnlyList<Point> shape)
         {
-            _drawableArea.Add(shape);
+            if (shape.First() != shape.Last())
+            {
+                var newList = new List<Point>(shape) {shape.First()};
+                shape = newList;
+            }
+            _mask = shape;
             return this;
         }
 
+        public InputFieldBuilder WithMask(params Point[] shape)
+        {
+            return WithMask((IReadOnlyList<Point>) shape);
+        }
+
+        /*
         public InputFieldBuilder EnableText()
         {
             _allowText = true;
@@ -102,20 +115,27 @@ namespace MemeGenerator
             _preferNoScaling = preferNoScaling;
             return this;
         }
+        */
+
+        public InputFieldBuilder WithRenderer(IInputRenderer renderer)
+        {
+            _renderers.Add(renderer);
+            return this;
+        }
 
         public InputField Build()
         {
-            if (_corners == null)
+            if (_topLeft == null || _topRight == null || _bottomLeft == null || _bottomRight == null)
             {
                 throw new InvalidOperationException("Corners were not specified.");
             }
 
-            if (!_allowText)
+            if (!_renderers.Any())
             {
-                throw new InvalidOperationException("At least one input mode must be specified for the bounding box.");
+                throw new InvalidOperationException("At least one renderer must be specified.");
             }
 
-            return new InputField(_corners[0], _corners[1], _corners[2], _corners[3], _paddingPercentage);
+            return new InputField(_topLeft, _topRight, _bottomLeft, _bottomRight, _paddingPercentage, _renderers, _mask);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Discord.Commands;
+using Discord.Commands;
 using Rem.Bot;
 using Rem.Fonts;
 using SixLabors.Fonts;

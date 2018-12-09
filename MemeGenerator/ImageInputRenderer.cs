@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
@@ -9,18 +9,24 @@ using SixLabors.Primitives;
 
 namespace MemeGenerator
 {
-    public class MemeImageRenderer
+    public class ImageInputRenderer : IInputRenderer
     {
         private readonly ImageScalingMode _scalingMode;
         private readonly GraphicsOptions _graphicsOptions;
 
-        public MemeImageRenderer(ImageScalingMode scalingMode, GraphicsOptions graphicsOptions)
+        public ImageInputRenderer(ImageScalingMode scalingMode, GraphicsOptions graphicsOptions)
         {
             _scalingMode = scalingMode;
             _graphicsOptions = graphicsOptions;
         }
-        public void DrawImageToImage(IImageProcessingContext<Rgba32> context, Rectangle area, Image<Rgba32> image)
+
+        public bool Render(IImageProcessingContext<Rgba32> context, Rectangle area, object input)
         {
+            if (!(input is Image<Rgba32> image))
+            {
+                return false;
+            }
+
             switch (_scalingMode)
             {
                 case ImageScalingMode.None:
@@ -44,6 +50,8 @@ namespace MemeGenerator
                 default:
                     throw new ArgumentException("Invalid scaling mode specified.");
             }
+
+            return true;
         }
 
         private void ApplyNone(IImageProcessingContext<Rgba32> context, Rectangle area, Image<Rgba32> image)

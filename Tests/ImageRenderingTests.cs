@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using MemeGenerator;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -57,7 +57,7 @@ namespace Tests
         [MemberData(nameof(BoundaryTestData))]
         public void ImageRenderingWithinBoundariesNoScaling(int imgWidth, int imgHeight, int boxWidth, int boxHeight)
         {
-            var renderer = new MemeImageRenderer(ImageScalingMode.None, new GraphicsOptions
+            var renderer = new ImageInputRenderer(ImageScalingMode.None, new GraphicsOptions
             {
                 Antialias = true,
                 AntialiasSubpixelDepth = 8
@@ -69,7 +69,7 @@ namespace Tests
         [MemberData(nameof(BoundaryTestData))]
         public void ImageRenderingWithinBoundariesCentering(int imgWidth, int imgHeight, int boxWidth, int boxHeight)
         {
-            var renderer = new MemeImageRenderer(ImageScalingMode.Center, new GraphicsOptions
+            var renderer = new ImageInputRenderer(ImageScalingMode.Center, new GraphicsOptions
             {
                 Antialias = true,
                 AntialiasSubpixelDepth = 8
@@ -81,7 +81,7 @@ namespace Tests
         [MemberData(nameof(BoundaryTestData))]
         public void ImageRenderingWithinBoundariesStretchFit(int imgWidth, int imgHeight, int boxWidth, int boxHeight)
         {
-            var renderer = new MemeImageRenderer(ImageScalingMode.StretchFit, new GraphicsOptions
+            var renderer = new ImageInputRenderer(ImageScalingMode.StretchFit, new GraphicsOptions
             {
                 Antialias = true,
                 AntialiasSubpixelDepth = 8
@@ -93,7 +93,7 @@ namespace Tests
         [MemberData(nameof(BoundaryTestData))]
         public void ImageRenderingWithinBoundariesTiling(int imgWidth, int imgHeight, int boxWidth, int boxHeight)
         {
-            var renderer = new MemeImageRenderer(ImageScalingMode.Tile, new GraphicsOptions
+            var renderer = new ImageInputRenderer(ImageScalingMode.Tile, new GraphicsOptions
             {
                 Antialias = true,
                 AntialiasSubpixelDepth = 8
@@ -105,7 +105,7 @@ namespace Tests
         [MemberData(nameof(BoundaryTestData))]
         public void ImageRenderingWithinBoundariesFillFit(int imgWidth, int imgHeight, int boxWidth, int boxHeight)
         {
-            var renderer = new MemeImageRenderer(ImageScalingMode.FillFit, new GraphicsOptions
+            var renderer = new ImageInputRenderer(ImageScalingMode.FillFit, new GraphicsOptions
             {
                 Antialias = true,
                 AntialiasSubpixelDepth = 8
@@ -117,7 +117,7 @@ namespace Tests
         [MemberData(nameof(BoundaryTestData))]
         public void ImageRenderingWithinBoundariesFitWithLetterbox(int imgWidth, int imgHeight, int boxWidth, int boxHeight)
         {
-            var renderer = new MemeImageRenderer(ImageScalingMode.FitWithLetterbox, new GraphicsOptions
+            var renderer = new ImageInputRenderer(ImageScalingMode.FitWithLetterbox, new GraphicsOptions
             {
                 Antialias = true,
                 AntialiasSubpixelDepth = 8
@@ -125,7 +125,7 @@ namespace Tests
             CheckImageRendering(renderer, imgWidth, imgHeight, boxWidth, boxHeight);
         }
 
-        private static void CheckImageRendering(MemeImageRenderer renderer, int imgWidth, int imgHeight, int boxWidth, int boxHeight)
+        private static void CheckImageRendering(ImageInputRenderer inputRenderer, int imgWidth, int imgHeight, int boxWidth, int boxHeight)
         {
             const int margin = 20;
 
@@ -137,7 +137,7 @@ namespace Tests
                     ctx.Fill(Rgba32.AliceBlue);
                     using (var img = GenerateImage(imgWidth, imgHeight))
                     {
-                        renderer.DrawImageToImage(ctx, renderArea, img);
+                        inputRenderer.Render(ctx, renderArea, img);
                     }
                 });
                 for (var y = 0; y < canvas.Height; y++)
