@@ -41,7 +41,6 @@ namespace MemeGenerator
                 case ImageScalingMode.Tile:
                     ApplyTile(context, area, image);
                     break;
-                */
                 default:
                     throw new ArgumentException("Invalid scaling mode specified.");
             }
