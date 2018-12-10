@@ -21,13 +21,13 @@ namespace MemeGenerator
         public IReadOnlyList<Point> Mask { get; }
         private readonly IReadOnlyList<IInputRenderer> _renderers;
 
-        public int WidthTop => ApplyPadding2X(TopRight.X - TopLeft.X);
-        public int WidthBottom => ApplyPadding2X(BottomRight.X - BottomLeft.X);
-        public int HeightLeft => ApplyPadding2X(BottomLeft.Y - TopLeft.Y);
-        public int HeightRight => ApplyPadding2X(BottomRight.Y - TopRight.Y);
-        public int MaxWidth => Math.Max(WidthTop, WidthBottom);
-        public int MaxHeight => Math.Max(HeightLeft, HeightRight);
-        public Rectangle DrawingArea => new Rectangle(0, 0, MaxWidth, MaxHeight);
+        private int WidthTop => TopRight.X - TopLeft.X;
+        private int WidthBottom => BottomRight.X - BottomLeft.X;
+        private int HeightLeft => BottomLeft.Y - TopLeft.Y;
+        private int HeightRight => BottomRight.Y - TopRight.Y;
+        private int MaxWidth => Math.Max(WidthTop, WidthBottom);
+        private int MaxHeight => Math.Max(HeightLeft, HeightRight);
+        public Rectangle DrawingArea => new Rectangle(CalculatePadding(WidthTop) / 2, CalculatePadding(HeightLeft) / 2, ApplyPadding2X(MaxWidth), ApplyPadding2X(MaxHeight));
 
         public InputField(string name, string description, Point topLeft, Point topRight, Point bottomLeft, Point bottomRight, double paddingPercent, IReadOnlyList<IInputRenderer> renderers, IReadOnlyList<Point> mask = null)
         {
@@ -72,12 +72,11 @@ namespace MemeGenerator
 
         private int ApplyPadding2X(int val)
         {
-            return (int)((1 - 2 * PaddingPercent) * val);
+            return val - 2 * CalculatePadding(val);
         }
-
-        private int ApplyPadding(int val)
+        private int CalculatePadding(int val)
         {
-            return (int)((1 - PaddingPercent) * val);
+            return (int)(PaddingPercent * val);
         }
     }
 }

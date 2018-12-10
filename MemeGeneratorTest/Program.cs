@@ -20,14 +20,15 @@ namespace MemeGeneratorTest
             });
 
             var font = MemeFonts.GetDefaultFont();
-            var textRenderer = new TextInputRenderer(font, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Center, VerticalAlignment.Center, false);
+            var textRenderer = new TextInputRenderer(font, null, Brushes.Solid(Rgba32.Black), HorizontalAlignment.Left, VerticalAlignment.Top, false);
             
             var inputField = new InputFieldBuilder()
+                .WithName("Paper", "Whatever Komi's looking at on the paper")
                 .WithVertices(new Point(245, 479), new Point(707, 563), new Point(48, 980), new Point(557, 1067))
                 .WithRenderer(imageRenderer)
                 .WithRenderer(textRenderer)
-                .WithPadding(0.1)
-                .WithMask(new Point(245, 479), new Point(665, 556), new Point(665, 699), new Point(555, 1066), new Point(185, 1067), new Point(185, 634))
+                .WithPadding(0.03)
+                .WithMask(new Point(245, 479), new Point(665, 556), new Point(665, 699), new Point(555, 1066), new Point(184, 1068), new Point(184, 633))
                 .Build();
 
             var memeTemplate = new MemeTemplateBuilder("KomiPaper.png")

@@ -23,7 +23,8 @@ namespace MemeGenerator
         private IReadOnlyList<Point> _mask;
         public InputFieldBuilder()
         {
-            _paddingPercentage = 0;
+            _description = "";
+            _paddingPercentage = 0.03;
             _renderers = new List<IInputRenderer>();
         }
 

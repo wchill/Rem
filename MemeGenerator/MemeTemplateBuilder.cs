@@ -25,9 +25,9 @@ namespace MemeGenerator
             return this;
         }
 
-        public MemeTemplateBuilder WithDescription(string description)
+        public MemeTemplateBuilder WithDescription(string description = null)
         {
-            _description = description ?? throw new ArgumentNullException($"{nameof(description)} cannot be null.");
+            _description = description ?? "";
             return this;
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -22,7 +23,7 @@ namespace MemeGenerator
 
         public bool Render(IImageProcessingContext<Rgba32> context, Rectangle area, object input)
         {
-            if (!(input is Lazy<Image<Rgba32>> lazyImage))
+            if (!(input is AsyncLazy<Image<Rgba32>> lazyImage))
             {
                 return false;
             }
@@ -30,11 +31,16 @@ namespace MemeGenerator
             Image<Rgba32> image;
             try
             {
-                image = lazyImage.Value;
+                image = lazyImage.GetAwaiter().GetResult();
+                if (image == null)
+                {
+                    return false;
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // Failed to load image (404, or it wasn't an image, etc), let something else take care of it.
+                Console.WriteLine(e);
                 return false;
             }
 
@@ -62,6 +68,7 @@ namespace MemeGenerator
                     throw new ArgumentException("Invalid scaling mode specified.");
             }
 
+            image.Dispose();
             return true;
         }
 

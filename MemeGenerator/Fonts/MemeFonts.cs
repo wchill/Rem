@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using SixLabors.Fonts;
@@ -56,7 +56,7 @@ namespace MemeGenerator.Fonts
         public static FontCollection Collection => LazyFontData.Value.Item1;
         public static IReadOnlyDictionary<AvailableFonts, FontDescription> Descriptions => LazyFontData.Value.Item2;
 
-        public static Font GetFont(AvailableFonts fontName, float size)
+        public static Font GetFont(AvailableFonts fontName, float size = 20)
         {
             var description = Descriptions[fontName];
             return Collection.CreateFont(description.FontFamily, size);

@@ -22,7 +22,6 @@ namespace Rem.Bot
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
-        private readonly IParameterExpansionService _expander;
         private readonly BotState _state;
         private readonly SQLiteAsyncConnection _dbContext;
         private readonly TaskCompletionSource<Task> _completionSource;
@@ -45,8 +44,6 @@ namespace Rem.Bot
 
             _commands = new CommandService();
             _services = null;
-
-            _expander = new ParameterExpansionService().AddTransformer(new StringImageHttpDownloadTransformer());
         }
 
         private static Task Log(LogMessage msg)
@@ -68,11 +65,11 @@ namespace Rem.Bot
             var types = Assembly.GetEntryAssembly().FindTypesWithAttribute<ServiceAttribute>().ToImmutableArray();
 
             _services = new ServiceCollection()
-                .AddSingleton(_expander)
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
                 .AddSingleton(_dbContext)
                 .AddSingleton(_state)
+                .AddSingleton(MemeLoader.LoadAllTemplates())
                 .AddServices(types)
                 .BuildServiceProvider();
         }

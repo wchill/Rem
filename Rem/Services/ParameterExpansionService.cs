@@ -11,13 +11,10 @@ namespace Rem.Services
 
         public ParameterExpansionService()
         {
-            _transformers = new List<IStringTransformer>();
-        }
-
-        public ParameterExpansionService AddTransformer(IStringTransformer transformer)
-        {
-            _transformers.Add(transformer);
-            return this;
+            _transformers = new List<IStringTransformer>()
+            {
+                new StringImageHttpDownloadTransformer()
+            };
         }
 
         public object[] Expand(string input)

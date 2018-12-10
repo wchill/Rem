@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using MemeGenerator;
 using RestSharp;
 using SixLabors.ImageSharp;
@@ -22,14 +23,21 @@ namespace Rem.Utilities
         {
             if (TryCreateUrl(input, out var url))
             {
-                transformed = new AsyncLazy<Image<Rgba32>>(async () =>
+                var lazy = new AsyncLazy<Image<Rgba32>>(async () =>
                 {
                     var client = new RestClient($"{url.Scheme}://{url.Authority}");
                     var request = new RestRequest(url.AbsolutePath);
                     var response = await client.ExecuteGetTaskAsync(request);
 
-                    return Image.Load(response.RawBytes);
+                    if (response.StatusCode == HttpStatusCode.OK && ValidMimeTypes.Contains(response.ContentType))
+                    {
+                        return Image.Load(response.RawBytes);
+                    }
+
+                    return null;
                 });
+                lazy.Start();
+                transformed = lazy;
                 return true;
             }
 

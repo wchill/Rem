@@ -4,7 +4,6 @@ using System.Linq;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace MemeGenerator
 {
@@ -23,75 +22,31 @@ namespace MemeGenerator
             InputFields = inputFields;
         }
 
-        public Image<Rgba32> CreateMeme(params object[][] inputs)
+        private Image<Rgba32> CreateMask()
         {
-            return CreateMeme((IEnumerable<object[]>) inputs);
-        }
-
-        public Image<Rgba32> CreateMeme(IEnumerable<object[]> inputs)
-        {
-            var inputArray = inputs.ToArray();
-            if (inputArray.Length != InputFields.Count)
-            {
-                throw new ArgumentException($"Input length mismatch: expected {InputFields.Count} but got {inputArray.Length} inputs");
-            }
-
             var maskAreas = InputFields.Select(field => field.Mask);
-            var meme = _baseImage.Clone();
-            try
-            {
-                using (var mask = MaskHelper.CreateMaskFromImage(meme, maskAreas))
-                {
-                    meme.Mutate(ctx =>
-                    {
-                        for (var i = 0; i < InputFields.Count; i++)
-                        {
-                            var success = CreateAndApplyLayerToContext(ctx, mask, InputFields[i], inputArray[i], $"layer{i}.png");
-                            if (!success)
-                            {
-                                throw new ArgumentException($"Input {i} could not be handled.");
-                            }
-                        }
-                    });
-                }
-            }
-            catch (Exception)
-            {
-                // Need to call dispose before throwing to prevent memory leakage
-                meme.Dispose();
-                throw;
-            }
-
-            return meme;
+            return MaskHelper.CreateMaskFromImage(_baseImage, maskAreas);
         }
 
-        private bool CreateAndApplyLayerToContext(IImageProcessingContext<Rgba32> context, Image<Rgba32> mask, InputField inputField, IReadOnlyList<object> inputArray, string outputFilename = null)
+        private Image<Rgba32> CreateLayer(Image<Rgba32> mask, InputField inputField, IReadOnlyList<object> inputArray)
         {
-            var success = false;
-            using (var layer = new Image<Rgba32>(mask.Width, mask.Height))
+            var layer = new Image<Rgba32>(mask.Width, mask.Height);
+            try
             {
                 layer.Mutate(layerCtx =>
                 {
                     // Each group of inputs corresponds to one input field
                     // Each input field may not be capable of handling all the given inputs (depending on renderers),
                     // so we try each one in succession until one succeeds (or all fail)
-                    foreach (var inputObj in inputArray)
+                    if (!inputArray.Any(inputObj => inputField.Apply(layerCtx, inputObj)))
                     {
-                        success = inputField.Apply(layerCtx, inputObj);
-                        if (success)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (!success)
-                    {
-                        return;
+                        throw new ArgumentException("Unable to handle input.");
                     }
 
                     // Project this layer into the correct position
                     var transformMatrix =
-                        ImageProjectionHelper.CalculateProjectiveTransformationMatrix(inputField.DrawingArea.Width, inputField.DrawingArea.Height,
+                        ImageProjectionHelper.CalculateProjectiveTransformationMatrix(inputField.DrawingArea.Width,
+                            inputField.DrawingArea.Height,
                             inputField.TopLeft, inputField.TopRight, inputField.BottomLeft, inputField.BottomRight);
                     ImageProjectionHelper.ProjectLayerOntoSurface(layerCtx, transformMatrix);
 
@@ -101,17 +56,70 @@ namespace MemeGenerator
                     layerCtx.DrawImage(mask, PixelBlenderMode.Xor, 1);
                 });
 
-                // For debugging purposes
-                if (outputFilename != null)
-                {
-                    layer.Save(outputFilename);
-                }
+                return layer;
+            }
+            catch (Exception)
+            {
+                layer.Dispose();
+                throw;
+            }
+        }
 
-                // Now draw this layer on top of the template
-                context.DrawImage(layer, 1);
+        public IReadOnlyList<Image<Rgba32>> CreateLayers(IReadOnlyList<object[]> inputs)
+        {
+            if (inputs.Count != InputFields.Count)
+            {
+                throw new ArgumentException($"Input length mismatch: expected {InputFields.Count} but got {inputs.Count} inputs");
             }
 
-            return success;
+            var allLayers = new List<Image<Rgba32>>();
+            var mask = CreateMask();
+            allLayers.Add(mask);
+            allLayers.AddRange(InputFields.Select((t, i) => CreateLayer(mask, t, inputs[i])));
+
+            return allLayers;
+        }
+
+        public Image<Rgba32> CreateMeme(params object[][] inputs)
+        {
+            return CreateMeme((IReadOnlyList<object[]>) inputs);
+        }
+
+        public Image<Rgba32> CreateMeme(IReadOnlyList<object[]> inputs)
+        {
+            var allLayers = CreateLayers(inputs);
+            try
+            {
+                return CreateMeme(allLayers);
+            }
+            finally
+            {
+                allLayers.Dispose();
+            }
+        }
+
+        public Image<Rgba32> CreateMeme(IReadOnlyList<Image<Rgba32>> allLayers)
+        {
+            var meme = _baseImage.Clone();
+            try
+            {
+                meme.Mutate(ctx =>
+                {
+                    var maskLayer = allLayers.First();
+                    var otherLayers = allLayers.Skip(1);
+                    foreach (var layer in otherLayers)
+                    {
+                        ctx.DrawImage(layer, 1);
+                    }
+                });
+            }
+            catch (Exception)
+            {
+                // Need to call dispose before throwing to prevent memory leakage
+                meme.Dispose();
+                throw;
+            }
+            return meme;
         }
 
         #region IDisposable Support
