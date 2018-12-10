@@ -22,8 +22,19 @@ namespace MemeGenerator
 
         public bool Render(IImageProcessingContext<Rgba32> context, Rectangle area, object input)
         {
-            if (!(input is Image<Rgba32> image))
+            if (!(input is Lazy<Image<Rgba32>> lazyImage))
             {
+                return false;
+            }
+
+            Image<Rgba32> image;
+            try
+            {
+                image = lazyImage.Value;
+            }
+            catch (Exception)
+            {
+                // Failed to load image (404, or it wasn't an image, etc), let something else take care of it.
                 return false;
             }
 

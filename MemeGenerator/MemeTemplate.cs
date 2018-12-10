@@ -10,13 +10,17 @@ namespace MemeGenerator
 {
     public class MemeTemplate : IDisposable
     {
+        public string Name { get; }
+        public string Description { get; }
+        public IReadOnlyList<InputField> InputFields { get; }
         private readonly Image<Rgba32> _baseImage;
-        private readonly IReadOnlyList<InputField> _inputFields;
 
-        public MemeTemplate(Image<Rgba32> baseImage, IReadOnlyList<InputField> inputFields)
+        public MemeTemplate(string name, string description, Image<Rgba32> baseImage, IReadOnlyList<InputField> inputFields)
         {
+            Name = name;
+            Description = description;
             _baseImage = baseImage;
-            _inputFields = inputFields;
+            InputFields = inputFields;
         }
 
         public Image<Rgba32> CreateMeme(params object[][] inputs)
@@ -27,12 +31,12 @@ namespace MemeGenerator
         public Image<Rgba32> CreateMeme(IEnumerable<object[]> inputs)
         {
             var inputArray = inputs.ToArray();
-            if (inputArray.Length != _inputFields.Count)
+            if (inputArray.Length != InputFields.Count)
             {
-                throw new ArgumentException($"Input length mismatch: expected {_inputFields.Count} but got {inputArray.Length} inputs");
+                throw new ArgumentException($"Input length mismatch: expected {InputFields.Count} but got {inputArray.Length} inputs");
             }
 
-            var maskAreas = _inputFields.Select(field => field.Mask);
+            var maskAreas = InputFields.Select(field => field.Mask);
             var meme = _baseImage.Clone();
             try
             {
@@ -40,9 +44,9 @@ namespace MemeGenerator
                 {
                     meme.Mutate(ctx =>
                     {
-                        for (var i = 0; i < _inputFields.Count; i++)
+                        for (var i = 0; i < InputFields.Count; i++)
                         {
-                            var success = CreateAndApplyLayerToContext(ctx, mask, _inputFields[i], inputArray[i], $"layer{i}.png");
+                            var success = CreateAndApplyLayerToContext(ctx, mask, InputFields[i], inputArray[i], $"layer{i}.png");
                             if (!success)
                             {
                                 throw new ArgumentException($"Input {i} could not be handled.");

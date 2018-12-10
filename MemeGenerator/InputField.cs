@@ -11,6 +11,8 @@ namespace MemeGenerator
 {
     public class InputField
     {
+        public string Name { get; }
+        public string Description { get; }
         public Point TopLeft { get; }
         public Point TopRight { get; }
         public Point BottomLeft { get; }
@@ -26,15 +28,11 @@ namespace MemeGenerator
         public int MaxWidth => Math.Max(WidthTop, WidthBottom);
         public int MaxHeight => Math.Max(HeightLeft, HeightRight);
         public Rectangle DrawingArea => new Rectangle(0, 0, MaxWidth, MaxHeight);
-        /*
 
-        public PointF BoundingBoxTopLeft => new PointF(ApplyPadding(Math.Min(TopLeft.X, BottomLeft.X)), ApplyPadding(Math.Min(TopLeft.Y, TopRight.Y)));
-
-        public PointF BoundingBoxBottomRight => new PointF(ApplyPadding(Math.Max(TopRight.X, BottomRight.X)), ApplyPadding(Math.Max(BottomLeft.Y, BottomRight.Y)));
-        */
-
-        public InputField(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight, double paddingPercent, IReadOnlyList<IInputRenderer> renderers,IReadOnlyList<Point> mask = null)
+        public InputField(string name, string description, Point topLeft, Point topRight, Point bottomLeft, Point bottomRight, double paddingPercent, IReadOnlyList<IInputRenderer> renderers, IReadOnlyList<Point> mask = null)
         {
+            Name = name;
+            Description = description;
             TopLeft = topLeft;
             TopRight = topRight;
             BottomLeft = bottomLeft;
