@@ -42,12 +42,17 @@ namespace MemeGenerator
                     {
                         throw new ArgumentException("Unable to handle input.");
                     }
+                });
 
+                layer.Save($"{inputField.Name}.png");
+
+                layer.Mutate(layerCtx => 
+                {
                     // Project this layer into the correct position
                     var transformMatrix =
-                        ImageProjectionHelper.CalculateProjectiveTransformationMatrix(inputField.DrawingArea.Width,
-                            inputField.DrawingArea.Height,
-                            inputField.TopLeft, inputField.TopRight, inputField.BottomLeft, inputField.BottomRight);
+                        ImageProjectionHelper.CalculateProjectiveTransformationMatrix(inputField.DrawingArea,
+                            inputField.PaddedTopLeft, inputField.PaddedTopRight, inputField.PaddedBottomLeft,
+                            inputField.PaddedBottomRight);
                     ImageProjectionHelper.ProjectLayerOntoSurface(layerCtx, transformMatrix);
 
                     // Apply the mask layer on top to prevent overlapping the base image

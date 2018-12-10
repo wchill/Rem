@@ -89,6 +89,14 @@ namespace MemeGenerator
                 throw new InvalidOperationException("Name was not specified.");
             }
 
+            if (_mask == null)
+            {
+                WithMask(new List<Point>
+                {
+                    _topLeft, _topRight, _bottomRight, _bottomLeft
+                });
+            }
+
             return new InputField(_name, _description, _topLeft, _topRight, _bottomLeft, _bottomRight, _paddingPercentage, _renderers, _mask);
         }
     }

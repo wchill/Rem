@@ -9,9 +9,18 @@ namespace MemeGenerator
 {
     public static class ImageProjectionHelper
     {
-        public static Matrix<float> CalculateProjectiveTransformationMatrix(float width, float height, PointF newTopLeft, PointF newTopRight, PointF newBottomLeft, PointF newBottomRight)
+        public static Matrix<float> CalculateProjectiveTransformationMatrix(Rectangle drawingArea, PointF newTopLeft, PointF newTopRight, PointF newBottomLeft, PointF newBottomRight)
         {
-            var s = MapBasisToPoints(new PointF(0, 0), new PointF(width, 0), new PointF(0, height), new PointF(width, height));
+            var x = drawingArea.X;
+            var y = drawingArea.Y;
+            var w = drawingArea.Width;
+            var h = drawingArea.Height;
+
+            var s = MapBasisToPoints(
+                new PointF(x, y),
+                new PointF(x + w, y),
+                new PointF(x, y + h),
+                new PointF(x + w, y + h));
             var d = MapBasisToPoints(newTopLeft, newTopRight, newBottomLeft, newBottomRight);
             var result = d.Multiply(AdjugateMatrix(s));
             var normalized = result.Divide(result[2, 2]);
