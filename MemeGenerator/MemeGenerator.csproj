@@ -28,9 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="4.7.0" />
-    <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta0007" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0005" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-dev002271" />
   </ItemGroup>
 
 </Project>

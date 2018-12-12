@@ -1,15 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using Rem.Bot;
-using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
@@ -103,8 +96,8 @@ namespace Rem.Commands
             var startX = 507 + (maxWidth - finalWidth) / 2;
             var startX2 = 507 + maxWidth - ((maxWidth - finalWidth) / 2 + onesScaled.Width);
 
-            img.Mutate(i => i.DrawImage(tensScaled, 1, new Point(startX, 182 + (maxHeight - tensScaled.Height) / 2)));
-            img.Mutate(i => i.DrawImage(onesScaled, 1, new Point(startX2, 182 + (maxHeight - onesScaled.Height) / 2)));
+            img.Mutate(i => i.DrawImage(tensScaled, new Point(startX, 182 + (maxHeight - tensScaled.Height) / 2), 1));
+            img.Mutate(i => i.DrawImage(onesScaled, new Point(startX2, 182 + (maxHeight - onesScaled.Height) / 2), 1));
 
             tensScaled.Dispose();
             onesScaled.Dispose();

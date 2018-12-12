@@ -6,11 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fonts\animeace.ttf" />
-    <None Remove="Fonts\animeace_b.ttf" />
-    <None Remove="Fonts\animeace_i.ttf" />
-    <None Remove="Fonts\Anton-Regular.ttf" />
-    <None Remove="Fonts\OpenSans-Regular.ttf" />
     <None Remove="Images\0.png" />
     <None Remove="Images\1.png" />
     <None Remove="Images\2.png" />
@@ -22,7 +17,6 @@
     <None Remove="Images\8.png" />
     <None Remove="Images\9.png" />
     <None Remove="Images\heatingup.png" />
-    <None Remove="Images\MemeTemplates\AlarmClock.png" />
     <None Remove="Images\MemeTemplates\Coma.jpg" />
     <None Remove="Images\MemeTemplates\CrystalOfTruth.png" />
     <None Remove="Images\MemeTemplates\DailyStruggle.png" />
@@ -42,21 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Fonts\animeace.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Fonts\animeace_b.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Fonts\animeace_i.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Fonts\Anton-Regular.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Fonts\OpenSans-Regular.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Images\HeatingUp\0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -88,9 +67,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\HeatingUp\heatingup.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\MemeTemplates\AlarmClock.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\MemeTemplates\CrystalOfTruth.png">
@@ -146,11 +122,8 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.0-beta" />
     <PackageReference Include="Fastenshtein" Version="1.0.0.5" />
-    <PackageReference Include="MathNet.Numerics" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="RestSharp" Version="106.5.4" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0005" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
   </ItemGroup>
 

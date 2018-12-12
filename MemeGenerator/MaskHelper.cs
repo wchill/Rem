@@ -30,7 +30,7 @@ namespace MemeGenerator
                         }
                     });
                     // Now delete those pixels from the actual mask
-                    ctx.DrawImage(cutout, PixelBlenderMode.Xor, 1);
+                    ctx.DrawImage(cutout, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.Xor, 1);
                 }
             });
             return maskLayer;

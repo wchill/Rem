@@ -20,18 +20,13 @@ namespace MemeGenerator
         public double PaddingPercent { get; }
         public IReadOnlyList<Point> Mask { get; }
         private readonly IReadOnlyList<IInputRenderer> _renderers;
-        
-        public Point PaddedTopLeft => new Point(TopLeft.X + CalculatePadding(WidthTop), TopLeft.Y + CalculatePadding(HeightLeft));
-        public Point PaddedTopRight => new Point(TopRight.X - CalculatePadding(WidthTop), TopRight.Y + CalculatePadding(HeightRight));
-        public Point PaddedBottomLeft => new Point(BottomLeft.X + CalculatePadding(WidthBottom), BottomLeft.Y - CalculatePadding(HeightLeft));
-        public Point PaddedBottomRight => new Point(BottomRight.X - CalculatePadding(WidthBottom), BottomRight.Y - CalculatePadding(HeightRight));
 
         private int WidthTop => TopRight.X - TopLeft.X;
         private int WidthBottom => BottomRight.X - BottomLeft.X;
         private int HeightLeft => BottomLeft.Y - TopLeft.Y;
         private int HeightRight => BottomRight.Y - TopRight.Y;
-        private int MaxWidth => Math.Max(WidthTop, WidthBottom);
-        private int MaxHeight => Math.Max(HeightLeft, HeightRight);
+        public int MaxWidth => Math.Max(WidthTop, WidthBottom);
+        public int MaxHeight => Math.Max(HeightLeft, HeightRight);
         public Rectangle DrawingArea => new Rectangle(CalculatePadding(WidthTop), CalculatePadding(HeightLeft), ApplyPadding2X(MaxWidth), ApplyPadding2X(MaxHeight));
 
         public InputField(string name, string description, Point topLeft, Point topRight, Point bottomLeft, Point bottomRight, double paddingPercent, IReadOnlyList<IInputRenderer> renderers, IReadOnlyList<Point> mask = null)

@@ -30,7 +30,7 @@ namespace MemeGenerator
 
         private Image<Rgba32> CreateLayer(Image<Rgba32> mask, InputField inputField, IReadOnlyList<object> inputArray)
         {
-            var layer = new Image<Rgba32>(mask.Width, mask.Height);
+            var layer = new Image<Rgba32>(inputField.MaxWidth, inputField.MaxHeight);
             try
             {
                 layer.Mutate(layerCtx =>
@@ -50,15 +50,15 @@ namespace MemeGenerator
                 {
                     // Project this layer into the correct position
                     var transformMatrix =
-                        ImageProjectionHelper.CalculateProjectiveTransformationMatrix(inputField.DrawingArea,
-                            inputField.PaddedTopLeft, inputField.PaddedTopRight, inputField.PaddedBottomLeft,
-                            inputField.PaddedBottomRight);
-                    ImageProjectionHelper.ProjectLayerOntoSurface(layerCtx, transformMatrix);
+                        ImageProjectionHelper.CalculateProjectiveTransformationMatrix(inputField.MaxWidth, inputField.MaxHeight,
+                            inputField.TopLeft, inputField.TopRight, inputField.BottomLeft,
+                            inputField.BottomRight);
+                    layerCtx.Transform(new ProjectiveTransformBuilder().AppendMatrix(transformMatrix), KnownResamplers.Lanczos3);
 
                     // Apply the mask layer on top to prevent overlapping the base image
                     // Draw the mask first onto this layer, then xor it back out so we will be left with only the transparent areas from the mask
                     layerCtx.DrawImage(mask, 1);
-                    layerCtx.DrawImage(mask, PixelBlenderMode.Xor, 1);
+                    layerCtx.DrawImage(mask, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.Xor, 1);
                 });
 
                 return layer;

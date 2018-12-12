@@ -59,7 +59,8 @@ namespace MemeGenerator
                     ApplyFillFit(context, area, image);
                     break;
                 case ImageScalingMode.FitWithLetterbox:
-                    ApplyFitWithLetterbox(context, area, image);
+                    //ApplyFitWithLetterbox(context, area, image);
+                    ApplyStretchFit(context, area, image);
                     break;
                 case ImageScalingMode.Tile:
                     ApplyTile(context, area, image);
@@ -82,7 +83,7 @@ namespace MemeGenerator
                     var newHeight = Math.Min(area.Height, img2.Height);
                     img2.Mutate(ctx => ctx.Crop(newWidth, newHeight));
                 }
-                context.DrawImage(_graphicsOptions, img2, area.Location);
+                context.DrawImage(img2, area.Location, _graphicsOptions);
             }
         }
 
@@ -101,7 +102,7 @@ namespace MemeGenerator
                 var sx = area.X + (area.Width - img2.Width) / 2;
                 var sy = area.Y + (area.Height - img2.Height) / 2;
 
-                context.DrawImage(_graphicsOptions, img2, new Point(sx, sy));
+                context.DrawImage(img2, new Point(sx, sy), _graphicsOptions);
             }
         }
 
@@ -116,7 +117,7 @@ namespace MemeGenerator
                     Size = new Size(area.Width, area.Height)
                 }));
 
-                context.DrawImage(_graphicsOptions, img2, area.Location);
+                context.DrawImage(img2, area.Location, _graphicsOptions);
             }
         }
         
@@ -146,7 +147,7 @@ namespace MemeGenerator
                     img2.Mutate(ctx => ctx.Crop(new Rectangle(x, y, newWidth, newHeight)));
                 }
 
-                context.DrawImage(_graphicsOptions, img2, area.Location);
+                context.DrawImage(img2, area.Location, _graphicsOptions);
             }
         }
 
@@ -169,7 +170,7 @@ namespace MemeGenerator
                 var sx = area.X + (area.Width - img2.Width) / 2;
                 var sy = area.Y + (area.Height - img2.Height) / 2;
 
-                context.DrawImage(_graphicsOptions, img2, new Point(sx, sy));
+                context.DrawImage(img2, new Point(sx, sy), _graphicsOptions);
             }
         }
 
