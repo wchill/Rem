@@ -17,7 +17,21 @@ namespace Rem.Utilities
 
         public static Dictionary<string, MemeTemplate> LoadAllTemplates()
         {
-            var templates = new Dictionary<string, MemeTemplate>();
+            Dictionary<string, MemeTemplate> templates;
+            try
+            {
+                var json_templates = Newtonsoft.Json.JsonConvert.DeserializeObject<MemeModels.MemeTemplates>(
+                    System.IO.File.ReadAllText("meme_templates.json"));
+                templates = json_templates.Convert();
+                return templates;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                templates = new Dictionary<string, MemeTemplate>();
+            }
+
+            //backup memes
             templates["komi"] = LoadKomiMemeTemplate();
             templates["dailystruggle"] = LoadDailyStruggleMemeTemplate();
             templates["coma"] = LoadComaMemeTemplate();

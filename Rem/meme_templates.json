@@ -1,0 +1,181 @@
+﻿{
+  "ImageRenderers": [
+    {
+      "$id": "defaultImage",
+      "ScalingMode": "FitWithLetterbox",
+      "GraphicsOptions": {
+        "Antialias": true,
+        "AntialiasSubpixelDepth":  8
+      }
+    }
+  ],
+  "TextRenderers": [
+    {
+      "$id": "defaultText",
+      "Font": "OpenSans",
+      "FontSize":  20,
+      "Brush": "0x000000",
+      "Alignment": [ "Center", "Center" ],
+      "PreferNoScaling": false
+    }
+  ],
+
+  "Templates": {
+    "komi": {
+      "Name":  "Komi",
+      "Description": "Komi-san reads something and gets excited!",
+      "ImagePath":  "Images/MemeTemplates/KomiPaper.png",
+      "TextRenderers": [
+        {
+          "$id": "komi_text",
+          "Font": "AnimeAce",
+          "Brush": "0x000000",
+          "Alignment": [ "Left", "Top" ],
+          "PreferNoScaling": false
+        }
+      ],
+      "Inputs": [
+        {
+          "Name": "Paper",
+          "Description": "Whatever Komi's looking at on the paper",
+          "Vertices": [[245, 479], [707, 563], [48, 980], [557, 1067]],
+          "Padding": 0.03,
+          "Mask": [[245, 479], [665, 556], [665, 699], [555, 1066], [184, 1068], [184, 633]],
+          "Renderers": [
+            { "$ref": "defaultImage" },
+            { "$ref": "komi_text" }
+          ]
+        }
+      ]
+    },
+    "dailystruggle": {
+      "Name": "Daily Struggle",
+      "Description": "My daily life is a struggle when I have to pick a button",
+      "ImagePath": "Images/MemeTemplates/DailyStruggle.png",
+      "Inputs": [
+        {
+          "Name":  "Left button",
+          "Description":  "Left button label",
+          "Vertices": [[52, 165], [358, 109], [115, 327], [423, 239]],
+          "Padding": 0.03,
+          "Renderers": [
+            { "$ref": "defaultImage" },
+            { "$ref": "defaultText" }
+          ]
+        },
+        {
+          "Name":  "Right button",
+          "Description":  "Right button label",
+          "Vertices": [[385, 105], [615, 77], [454, 246], [677, 183]],
+          "Padding": 0.03,
+          "Renderers": [
+            { "$ref": "defaultImage" },
+            { "$ref": "defaultText" }
+          ]
+        }
+      ]
+    },
+    "coma": {
+      "Name": "Coma",
+      "Description": "Sir, you've been in a coma for...",
+      "imagePath": "Images/MemeTemplates/Coma.jpg",
+      "TextRenderers": [
+        {
+          "$id": "coma_text",
+          "Font": "OpenSans",
+          "FontSize": 36,
+          "Alignment": [ "Center", "Center" ],
+          "PreferNoScaling": true
+        }
+      ],
+      "Inputs": [
+        {
+          "Name": "Nurse",
+          "Description": "Sir, you've been in a coma for...",
+          "Vertices": [[145, 73], [715, 73], [145, 147], [715, 147]],
+          "Padding":  0.03,
+          "Renderers": [ { "$ref": "coma_text" } ]
+        },
+        {
+          "Name": "Patient response",
+          "Description": "Oh boy, I can't wait to...",
+          "Vertices": [[158, 150], [725, 150], [158, 260], [725, 260]],
+          "Padding":  0.03,
+          "Renderers": [ { "$ref": "coma_text" } ]
+        }
+      ]
+    },
+    "crystaloftruth": {
+      "Name": "Crystal of Truth",
+      "Description": "At long last I have found it, the crystal which utters only truth!",
+      "ImagePath": "Images/MemeTemplates/CrystalOfTruth.png",
+      "Inputs": [
+        {
+          "Name": "Truth",
+          "Description": "The truth",
+          "Vertices": [[70, 530], [450, 530], [70, 610], [450, 610]],
+          "Padding": 0.03,
+          "Renderers": [ { "$ref": "defaultText" } ]
+        }
+      ]
+    },
+    "distractedbf": {
+      "Name": "Distracted Boyfriend",
+      "Description": "Disloyal man walking with his girlfriend and looking amazed at another seductive girl",
+      "ImagePath": "Images/MemeTemplates/DistractedBoyfriend.jpg",
+      "TextRenderers": [
+        {
+          "$id": "distboyf_text",
+          "Font": "Anton",
+          "Pen": "0x000000",
+          "PenWidth": 2,
+          "Brush": "0xFFFFFF",
+          "Alignment": [ "Center", "Center" ],
+          "PreferNoScaling": false
+        }
+      ],
+      "Inputs": [
+        {
+          "Name": "Boyfriend",
+          "Vertices": [[1338, 823], [1838, 823], [1338, 1083], [1838, 1083]],
+          "Padding": 0.03,
+          "Renderers": [
+            { "$ref": "defaultImage" },
+            { "$ref": "distboyf_text" }
+          ]
+        },
+        {
+          "Name": "Girlfriend",
+          "Vertices": [[1874, 829], [2314, 829], [1874, 1089], [2314, 1089]],
+          "Padding": 0.03,
+          "Renderers": [
+            { "$ref": "defaultImage" },
+            { "$ref": "distboyf_text" }
+          ]
+        },
+        {
+          "Name": "The other girl",
+          "Vertices": [[487, 1016], [987, 1016], [487, 1276], [987, 1276]],
+          "Padding": 0.03,
+          "Renderers": [
+            { "$ref": "defaultImage" },
+            { "$ref": "distboyf_text" }
+          ]
+        }
+      ]
+    },
+    "disappointment": {
+      "Name": "Disappointment",
+      "Description": "Free disappointment",
+      "ImagePath": "Images/MemeTemplates/Disappointment.png",
+      "Inputs": [
+        {
+          "Name": "Baby",
+          "Vertices": [[115, 720], [584, 720], [115, 884], [584, 884]],
+          "Padding": 0.03,
+          "Renderers": [ { "$ref": "defaultText" } ]
+        }
+      ]
+    }
+  }
+}

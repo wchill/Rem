@@ -131,4 +131,10 @@
     <ProjectReference Include="..\MemeGenerator\MemeGenerator.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="meme_templates.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
