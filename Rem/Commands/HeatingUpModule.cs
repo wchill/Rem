@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Discord.Commands;
 using Rem.Bot;
+using Rem.Attributes;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -35,6 +36,7 @@ namespace Rem.Commands
             }
         }
 
+        [RequireRole("regulars")]
         [Command("heatingup"), Summary("Whoa, this thing's finally heating up for the Xth time.")]
         public async Task HeatingUp()
         {
@@ -49,6 +51,7 @@ namespace Rem.Commands
             }
         }
 
+        [RequireRole("regulars")]
         [Command("coolingdown"), Summary("Whoa, this thing's cooling down.")]
         public async Task CoolingDown()
         {
