@@ -48,7 +48,8 @@ namespace Rem.Services
             _module = await _commandService.CreateModuleAsync("", module =>
             {
                 module.WithSummary("Automatically generates memes")
-                    .WithName("Auto Meme Generator");
+                    .WithName("Auto Meme Generator")
+                    .AddPrecondition(new RequireRoleAttribute("regulars"));
 
                 foreach (var kvp in _commandAliasToTemplates)
                 {
