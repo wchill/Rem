@@ -115,8 +115,8 @@ namespace Rem.Commands
         {
             try
             {
-                await _dbContext.Table<Image>().Where(x => x.Url == url).DeleteAsync();
-                await ReplyAsync($"Deleted image from the database.");
+                var numRows = await _dbContext.Table<Image>().Where(x => x.Url == url).DeleteAsync();
+                await ReplyAsync($"Deleted {numRows} image(s) from the database.");
             }
             catch (Exception)
             {

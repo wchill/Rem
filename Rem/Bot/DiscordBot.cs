@@ -77,7 +77,7 @@ namespace Rem.Bot
         private async Task InstallCommands()
         {
             _client.MessageReceived += MessageReceived;
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
         private async Task MessageReceived(SocketMessage messageParam)
@@ -112,20 +112,28 @@ namespace Rem.Bot
 
                         break;
                     case CommandError.UnknownCommand:
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
                         break;
                     case CommandError.ParseFailed:
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
                         break;
                     case CommandError.BadArgCount:
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
                         break;
                     case CommandError.ObjectNotFound:
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
                         break;
                     case CommandError.MultipleMatches:
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
                         break;
                     case CommandError.UnmetPrecondition:
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
                         break;
                     case CommandError.Unsuccessful:
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
                         break;
                     default:
+                        await Console.Error.WriteLineAsync($"Unknown result type: {result.Error}");
                         break;
                 }
             }

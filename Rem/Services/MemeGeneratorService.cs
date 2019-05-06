@@ -8,6 +8,7 @@ using Discord.Commands;
 using Discord.Commands.Builders;
 using MemeGenerator;
 using Rem.Attributes;
+using Rem.Bot;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
@@ -17,17 +18,25 @@ namespace Rem.Services
     [Service(typeof(IMemeGeneratorService))]
     public class MemeGeneratorService : IMemeGeneratorService
     {
+        private static readonly string ModuleName = "Auto Meme Generator";
+
         private readonly CommandService _commandService;
         private readonly IParameterExpansionService _expansionService;
+        private readonly BotState _botState;
+
+        // Maps command triggers to the meme templates.
         private readonly Dictionary<string, MemeTemplate> _commandAliasToTemplates;
+
+        // Maps command names (not triggers) to the meme templates.
         private readonly Dictionary<string, MemeTemplate> _commandNameToTemplates;
 
         private ModuleInfo _module;
 
-        public MemeGeneratorService(CommandService commandService, IParameterExpansionService expansionService, Dictionary<string, MemeTemplate> templates = null)
+        public MemeGeneratorService(CommandService commandService, IParameterExpansionService expansionService, BotState botState, Dictionary<string, MemeTemplate> templates = null)
         {
             _commandService = commandService;
             _expansionService = expansionService;
+            _botState = botState;
             _commandAliasToTemplates = templates ?? new Dictionary<string, MemeTemplate>();
             _commandNameToTemplates = _commandAliasToTemplates.Values.ToDictionary(template => template.Name);
         }
@@ -48,18 +57,41 @@ namespace Rem.Services
             _module = await _commandService.CreateModuleAsync("", module =>
             {
                 module.WithSummary("Automatically generates memes")
-                    .WithName("Auto Meme Generator")
+                    .WithName(ModuleName)
                     .AddPrecondition(new RequireRoleAttribute("regulars"));
 
+                // Add one command for each meme
                 foreach (var kvp in _commandAliasToTemplates)
                 {
-                    CreateCommand(kvp.Key, kvp.Value, module);
-                    CreateDebugCommand($"{kvp.Key}-debug", kvp.Value, module);
+                    CreateMemeCommand(kvp.Key, kvp.Value, module);
+                    CreateMemeDebugCommand($"{kvp.Key}-debug", kvp.Value, module);
                 }
+
+                // Add help commands
+                module.AddCommand("meme", MemeHelpCallbackAsync, command =>
+                {
+                    command
+                        .WithName("Meme List")
+                        .WithSummary("Get the list of memes available.")
+                        .WithRunMode(RunMode.Async);
+                });
+                module.AddCommand("meme", MemeHelpCallbackAsync, command =>
+                {
+                    command
+                        .WithName("Meme Help")
+                        .WithSummary("Get help for a meme.")
+                        .WithRunMode(RunMode.Async);
+                    command.AddParameter<string>("command", builder =>
+                    {
+                        builder
+                            .WithSummary("meme command")
+                            .WithIsRemainder(true);
+                    });
+                });
             });
         }
 
-        private void CreateCommand(string trigger, MemeTemplate template, ModuleBuilder module)
+        private void CreateMemeCommand(string trigger, MemeTemplate template, ModuleBuilder module)
         {
             module.AddCommand(trigger, CommandCallbackAsync, command =>
             {
@@ -71,12 +103,12 @@ namespace Rem.Services
             });
         }
 
-        private void CreateDebugCommand(string trigger, MemeTemplate template, ModuleBuilder module)
+        private void CreateMemeDebugCommand(string trigger, MemeTemplate template, ModuleBuilder module)
         {
             module.AddCommand(trigger, DebugCommandCallbackAsync, command =>
             {
                 command
-                    .WithName(template.Name)
+                    .WithName($"{template.Name} (Debug)")
                     .WithSummary(template.Description)
                     .WithRunMode(RunMode.Async)
                     .AddPrecondition(new RequireOwnerAttribute());
@@ -123,7 +155,7 @@ namespace Rem.Services
             {
                 var expandedParameters = parameters.Select(param => _expansionService.Expand(param as string)).ToList();
                 var allLayers = template.CreateLayers(expandedParameters);
-                var meme = template.CreateMeme(allLayers);
+                var meme = await Task.Run(() => template.CreateMeme(allLayers));
                 try
                 {
                     var mask = allLayers.First();
@@ -158,10 +190,54 @@ namespace Rem.Services
             using (context.Channel.EnterTypingState())
             {
                 var expandedParameters = parameters.Select(param => _expansionService.Expand(param as string)).ToList();
-                using (var meme = template.CreateMeme(expandedParameters))
+                using (var meme = await Task.Run(() => template.CreateMeme(expandedParameters)))
                 {
                     await SendImage(meme, context.Channel, template.Name);
                 }
+            }
+        }
+
+        private async Task MemeHelpCallbackAsync(ICommandContext context, object[] parameters, IServiceProvider services, CommandInfo info)
+        {
+            if (parameters.Length == 0)
+            {
+                var builder = new EmbedBuilder();
+
+                builder.WithTitle("List of meme commands");
+                builder.WithColor(0, 255, 0);
+
+                var commandNames = _commandAliasToTemplates.Keys.ToArray();
+                var half = (commandNames.Length + 1) / 2;
+
+                if (commandNames.Length == 0)
+                {
+                    await context.Channel.SendMessageAsync("There are no meme commands installed.");
+                    return;
+                }
+
+                builder.AddField("Meme list", string.Join("\n", commandNames, 0, half), true);
+                builder.AddField("Meme list", string.Join("\n", commandNames, half, commandNames.Length - half), true);
+
+                await context.Channel.SendMessageAsync("", embed: builder.Build());
+            }
+            else
+            {
+                var alias = parameters[0] as string;
+                var command = _commandService.Commands.Where(ci => ci.Module.Name == ModuleName && ci.Aliases.Contains(alias)).FirstOrDefault();
+                if (command == null)
+                {
+                    await context.Channel.SendMessageAsync("That meme doesn't exist.");
+                    return;
+                }
+
+                var builder = new EmbedBuilder();
+
+                builder.WithTitle(command.Name);
+                builder.WithColor(0, 255, 0);
+                builder.WithDescription(command.Summary);
+                builder.AddField("Usage", $"{_botState.Prefix}{alias} <{string.Join("> <", command.Parameters.Select(p => p.Name).ToArray())}>");
+
+                await context.Channel.SendMessageAsync("", embed: builder.Build());
             }
         }
 
@@ -171,7 +247,7 @@ namespace Rem.Services
             {
                 image.Save(memoryStream, new PngEncoder());
                 memoryStream.Seek(0, SeekOrigin.Begin);
-                await channel.SendFileAsync(memoryStream, $"{imagename}-.png");
+                await channel.SendFileAsync(memoryStream, $"{imagename}.png");
             }
         }
     }
