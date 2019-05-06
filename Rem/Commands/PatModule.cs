@@ -13,6 +13,7 @@ using Image = Rem.Models.Image;
 
 namespace Rem.Commands
 {
+    [Name("Headpats")]
     public class PatModule : ModuleBase
     {
         private readonly SQLiteAsyncConnection _dbContext;

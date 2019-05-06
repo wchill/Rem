@@ -10,7 +10,7 @@ using RestSharp.Deserializers;
 
 namespace Rem.Commands
 {
-
+    [Name("Urban Dictionary")]
     public class UrbanDictionaryModule : ModuleBase
     {
         internal class UdDefinition

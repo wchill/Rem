@@ -37,6 +37,7 @@ namespace Rem.Bot
             _client.Log += Log;
             _client.Ready += () =>
             {
+                _state.ConnectionTime = DateTime.UtcNow;
                 _completionSource.SetResult(Task.CompletedTask);
                 Log($"Running as user {_client.CurrentUser.Username} ({_client.CurrentUser.Id})");
                 return Task.CompletedTask;
@@ -111,8 +112,6 @@ namespace Rem.Bot
                         }
                         break;
                     case CommandError.UnknownCommand:
-                        await context.Channel.SendMessageAsync(result.ErrorReason);
-                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                     case CommandError.ParseFailed:
                         await context.Channel.SendMessageAsync(result.ErrorReason);
@@ -161,7 +160,7 @@ namespace Rem.Bot
             await _completionSource.Task;
             _services.RunInitMethods();
 
-            await _client.SetGameAsync($"{_state.Version} - https://github.com/wchill/Rem");
+            await _client.SetGameAsync($"{_state.Version}");
         }
     }
 }

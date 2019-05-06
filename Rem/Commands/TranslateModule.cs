@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Rem.Commands
 {
+    [Name("Translate")]
     public class TranslateModule : ModuleBase
     {
         internal class SupportedLanguage

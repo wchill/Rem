@@ -7,6 +7,7 @@ using SQLite;
 
 namespace Rem.Commands
 {
+    [Name("Quote")]
     public class QuoteModule : ModuleBase
     {
         private readonly SQLiteAsyncConnection _dbContext;

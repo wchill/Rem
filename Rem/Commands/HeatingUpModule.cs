@@ -11,6 +11,7 @@ using Image = SixLabors.ImageSharp.Image;
 
 namespace Rem.Commands
 {
+    [Name("Heating Up")]
     public class HeatingUpModule : ModuleBase
     {
         private readonly BotState _botState;

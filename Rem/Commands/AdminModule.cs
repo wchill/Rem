@@ -9,6 +9,8 @@ using Rem.Bot;
 
 namespace Rem.Commands
 {
+    [HiddenModule]
+    [Name("Admin")]
     public class AdminModule : ModuleBase
     {
         private readonly BotState _botState;

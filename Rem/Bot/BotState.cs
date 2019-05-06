@@ -26,6 +26,9 @@ namespace Rem.Bot
         [JsonIgnore]
         public string FilePath { get; private set; }
 
+        [JsonIgnore]
+        public DateTime ConnectionTime { get; set; }
+
         public static BotState Initialize(string version, string filePath)
         {
             try

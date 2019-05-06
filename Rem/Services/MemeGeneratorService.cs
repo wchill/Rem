@@ -68,23 +68,11 @@ namespace Rem.Services
                 }
 
                 // Add help commands
-                module.AddCommand("meme", MemeHelpCallbackAsync, command =>
+                module.AddCommand("memes", MemeHelpCallbackAsync, command =>
                 {
                     command
                         .WithName("Meme List")
                         .WithSummary("Get the list of memes available.");
-                });
-                module.AddCommand("meme", MemeHelpCallbackAsync, command =>
-                {
-                    command
-                        .WithName("Meme Help")
-                        .WithSummary("Get help for a meme.");
-                    command.AddParameter<string>("command", builder =>
-                    {
-                        builder
-                            .WithSummary("meme command")
-                            .WithIsRemainder(true);
-                    });
                 });
             });
         }
@@ -195,47 +183,25 @@ namespace Rem.Services
 
         private async Task MemeHelpCallbackAsync(ICommandContext context, object[] parameters, IServiceProvider services, CommandInfo info)
         {
-            if (parameters.Length == 0)
+            var builder = new EmbedBuilder();
+
+            builder.WithTitle("List of meme commands");
+            builder.WithFooter($"For help with an individual meme, use {_botState.Prefix}help <command>");
+            builder.WithColor(0, 255, 0);
+
+            var commandNames = _commandAliasToTemplates.Keys.ToArray();
+            var half = (commandNames.Length + 1) / 2;
+
+            if (commandNames.Length == 0)
             {
-                var builder = new EmbedBuilder();
-
-                builder.WithTitle("List of meme commands");
-                builder.WithFooter($"For help with an individual meme, use {_botState.Prefix}{info.Aliases.First()} <command>");
-                builder.WithColor(0, 255, 0);
-
-                var commandNames = _commandAliasToTemplates.Keys.ToArray();
-                var half = (commandNames.Length + 1) / 2;
-
-                if (commandNames.Length == 0)
-                {
-                    await context.Channel.SendMessageAsync("There are no meme commands installed.");
-                    return;
-                }
-
-                builder.AddField("Meme list", string.Join("\n", commandNames, 0, half), true);
-                builder.AddField("Meme list", string.Join("\n", commandNames, half, commandNames.Length - half), true);
-
-                await context.Channel.SendMessageAsync("", embed: builder.Build());
+                await context.Channel.SendMessageAsync("There are no meme commands installed.");
+                return;
             }
-            else
-            {
-                var alias = parameters[0] as string;
-                var command = _commandService.Commands.Where(ci => ci.Module.Name == ModuleName && ci.Aliases.Contains(alias)).FirstOrDefault();
-                if (command == null)
-                {
-                    await context.Channel.SendMessageAsync("That meme doesn't exist.");
-                    return;
-                }
 
-                var builder = new EmbedBuilder();
+            builder.AddField("Meme list", string.Join("\n", commandNames, 0, half), true);
+            builder.AddField("Meme list", string.Join("\n", commandNames, half, commandNames.Length - half), true);
 
-                builder.WithTitle(command.Name);
-                builder.WithColor(0, 255, 0);
-                builder.WithDescription(command.Summary);
-                builder.AddField("Usage", $"{_botState.Prefix}{alias} <{string.Join("> <", command.Parameters.Select(p => p.Name).ToArray())}>");
-
-                await context.Channel.SendMessageAsync("", embed: builder.Build());
-            }
+            await context.Channel.SendMessageAsync("", embed: builder.Build());
         }
 
         private async Task SendImage(Image<Rgba32> image, IMessageChannel channel, string imagename)
