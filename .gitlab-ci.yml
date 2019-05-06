@@ -7,8 +7,8 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
   IMAGE_NAME: discord-rem
-  TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   IMAGE: $DOCKER_REGISTRY_URL/$IMAGE_NAME
+  TEST_IMAGE: $DOCKER_REGISTRY_URL/$IMAGE_NAME:test-$CI_COMMIT_SHA
 
 stages:
   - build
@@ -23,7 +23,6 @@ build:
     - echo $PWD
     - apk update && apk add git
     - export VERSION_STR=$(git show -s --date=format:"%Y-%m-%d %H:%M:%S %z" --format="commit %h (%cd)" $CI_COMMIT_SHA)
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - echo "$VERSION_STR" > Rem/VERSION.txt
     - docker pull $IMAGE:$CI_COMMIT_REF_SLUG || true
@@ -37,8 +36,6 @@ test:
   stage: test
   tags:
     - docker
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker pull $TEST_IMAGE
     - docker run $TEST_IMAGE
