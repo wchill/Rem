@@ -72,15 +72,13 @@ namespace Rem.Services
                 {
                     command
                         .WithName("Meme List")
-                        .WithSummary("Get the list of memes available.")
-                        .WithRunMode(RunMode.Async);
+                        .WithSummary("Get the list of memes available.");
                 });
                 module.AddCommand("meme", MemeHelpCallbackAsync, command =>
                 {
                     command
                         .WithName("Meme Help")
-                        .WithSummary("Get help for a meme.")
-                        .WithRunMode(RunMode.Async);
+                        .WithSummary("Get help for a meme.");
                     command.AddParameter<string>("command", builder =>
                     {
                         builder
@@ -97,8 +95,7 @@ namespace Rem.Services
             {
                 command
                     .WithName(template.Name)
-                    .WithSummary(template.Description)
-                    .WithRunMode(RunMode.Async);
+                    .WithSummary(template.Description);
                 AddParameters(template, command);
             });
         }
@@ -110,7 +107,6 @@ namespace Rem.Services
                 command
                     .WithName($"{template.Name} (Debug)")
                     .WithSummary(template.Description)
-                    .WithRunMode(RunMode.Async)
                     .AddPrecondition(new RequireOwnerAttribute());
                 AddParameters(template, command);
             });
@@ -204,6 +200,7 @@ namespace Rem.Services
                 var builder = new EmbedBuilder();
 
                 builder.WithTitle("List of meme commands");
+                builder.WithFooter($"For help with an individual meme, use {_botState.Prefix}{info.Aliases.First()} <command>");
                 builder.WithColor(0, 255, 0);
 
                 var commandNames = _commandAliasToTemplates.Keys.ToArray();

@@ -43,12 +43,17 @@ namespace Rem.Bot
             };
 
             _commands = new CommandService();
+            _commands.Log += Log;
             _services = null;
         }
 
         private static Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.ToString());
+            if (msg.Exception != null)
+            {
+                Console.Error.WriteLine(msg.Exception);
+            }
             return Task.CompletedTask;
         }
 
@@ -94,10 +99,6 @@ namespace Rem.Bot
             // Execute the command. (result does not indicate a return value, 
             // rather an object stating if the command executed successfully)
             var result = await _commands.ExecuteAsync(context, argPos, _services);
-            /*
-            if (!result.IsSuccess)
-                await context.Channel.SendMessageAsync(result.ErrorReason);
-            */
             if (!result.IsSuccess)
             {
                 switch (result.Error)
@@ -105,46 +106,49 @@ namespace Rem.Bot
                     case CommandError.Exception:
                         if (result is ExecuteResult execResult)
                         {
-                            //Debugger.Break();
                             await Console.Error.WriteLineAsync($"Error encountered when handling command {message}:");
                             await Console.Error.WriteLineAsync(execResult.Exception.ToString());
                         }
-
                         break;
                     case CommandError.UnknownCommand:
                         await context.Channel.SendMessageAsync(result.ErrorReason);
+                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                     case CommandError.ParseFailed:
                         await context.Channel.SendMessageAsync(result.ErrorReason);
+                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                     case CommandError.BadArgCount:
                         await context.Channel.SendMessageAsync(result.ErrorReason);
+                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                     case CommandError.ObjectNotFound:
                         await context.Channel.SendMessageAsync(result.ErrorReason);
+                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                     case CommandError.MultipleMatches:
                         await context.Channel.SendMessageAsync(result.ErrorReason);
+                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                     case CommandError.UnmetPrecondition:
-                        await context.Channel.SendMessageAsync(result.ErrorReason);
+                        await context.Channel.SendMessageAsync($"<@{message.Author.Id}>: {result.ErrorReason}");
                         break;
                     case CommandError.Unsuccessful:
                         await context.Channel.SendMessageAsync(result.ErrorReason);
+                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                     default:
                         await Console.Error.WriteLineAsync($"Unknown result type: {result.Error}");
+                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
                         break;
                 }
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
             }
-            
-            await _state.PersistState();
-        }
 
-        private async Task UpdateDiscordStatus()
-        {
-            await _client.SetGameAsync($"{_state.Version}");
-            // await _client.SetGameAsync($"{_state.PatCount} pats given, {_state.BribeCount} mods bribed");
+            await _state.PersistState();
         }
 
         public async Task Start()
@@ -157,7 +161,7 @@ namespace Rem.Bot
             await _completionSource.Task;
             _services.RunInitMethods();
 
-            await UpdateDiscordStatus();
+            await _client.SetGameAsync($"{_state.Version} - https://github.com/wchill/Rem");
         }
     }
 }

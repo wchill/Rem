@@ -104,7 +104,7 @@ namespace Rem.Commands
         {
             var totalVotes = definition.ThumbsUp + definition.ThumbsDown;
             var upvotePercentage = totalVotes > 0 ? (double)definition.ThumbsUp / totalVotes : 0.5;
-            return (upvotePercentage - 0.5) * Math.Log10(definition.ThumbsUp + 1);
+            return (upvotePercentage - 0.5) * Math.Log10(totalVotes + 1);
         }
 
         private async Task<UdApiResponse> QueryApi(string query)

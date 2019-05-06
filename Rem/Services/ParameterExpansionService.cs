@@ -32,9 +32,5 @@ namespace Rem.Services
             output.Add(input);
             return output.ToArray();
         }
-        /*
-         * 
-                    inputs[i] = await context.Guild.ResolveIds(inputs[i]);
-                    */
     }
 }
