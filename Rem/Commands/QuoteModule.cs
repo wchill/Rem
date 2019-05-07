@@ -117,7 +117,7 @@ namespace Rem.Commands
 
             var builder = new EmbedBuilder();
 
-            builder.WithTitle("Quote");
+            builder.WithTitle(authorInfo.Username);
             builder.WithColor(0, 255, 0);
             builder.WithDescription(quote.QuoteString);
             builder.WithThumbnailUrl(authorInfo.GetAvatarUrl());
