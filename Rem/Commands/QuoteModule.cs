@@ -94,6 +94,11 @@ namespace Rem.Commands
                 await ReplyAsync("That message ID doesn't match with any message in this channel.");
                 return;
             }
+            if (string.IsNullOrWhiteSpace(message.Content))
+            {
+                await ReplyAsync("I can't quote blank messages or rich embeds.");
+                return;
+            }
             var quote = new Quote
             {
                 AuthorId = message.Author.Id.ToString(),
@@ -114,14 +119,19 @@ namespace Rem.Commands
             var authorInfo = users[0];
             var quoterInfo = users[1];
 
-            var builder = new EmbedBuilder();
+            var avatarUrl = authorInfo.GetAvatarUrl() ?? authorInfo.GetDefaultAvatarUrl();
 
-            builder.WithTitle(authorInfo.Username);
+            var builder = new EmbedBuilder();
+            
             builder.WithColor(0, 255, 0);
             builder.WithDescription(quote.QuoteString);
-            builder.WithThumbnailUrl(authorInfo.GetAvatarUrl());
-            builder.AddField("Timestamp", quote.QuoteTime);
-            builder.WithFooter($"#{quote.Id} - added by {quoterInfo.Username}", quoterInfo.GetAvatarUrl());
+            builder.WithFooter($"#{quote.Id} (added by {quoterInfo.Username})", quoterInfo.GetAvatarUrl());
+            builder.Author = new EmbedAuthorBuilder
+            {
+                IconUrl = avatarUrl,
+                Name = authorInfo.Username
+            };
+            builder.Timestamp = new DateTime(quote.QuoteTime.Ticks, DateTimeKind.Utc);
 
             await ReplyAsync("", embed: builder.Build());
         }
