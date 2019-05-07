@@ -32,14 +32,7 @@ namespace Rem.Commands
         public async Task AddQuote()
         {
             var previousMessage = await Context.GetPreviousMessage();
-            await _dbContext.InsertAsync(new Quote
-            {
-                AuthorId = previousMessage.Author.Id.ToString(),
-                QuotedById = Context.User.Id.ToString(),
-                QuoteTime = previousMessage.Timestamp.UtcDateTime,
-                QuoteString = previousMessage.Content
-            });
-            await ReplyAsync("Added quote to the database.");
+            await AddQuote(previousMessage);
         }
 
         [RequireRole("regulars")]
@@ -47,19 +40,7 @@ namespace Rem.Commands
         public async Task AddQuote(ulong messageId)
         {
             var previousMessage = await Context.Channel.GetMessageAsync(messageId);
-            if (previousMessage == null)
-            {
-                await ReplyAsync("That message ID doesn't match with any message in this channel.");
-                return;
-            }
-            await _dbContext.InsertAsync(new Quote
-            {
-                AuthorId = previousMessage.Author.Id.ToString(),
-                QuotedById = Context.User.Id.ToString(),
-                QuoteTime = previousMessage.Timestamp.UtcDateTime,
-                QuoteString = previousMessage.Content
-            });
-            await ReplyAsync("Added quote to the database.");
+            await AddQuote(previousMessage);
         }
 
         [Command("quote"), Summary("Retrieve a random quote")]
@@ -106,6 +87,24 @@ namespace Rem.Commands
             await ReplyWithQuote(quote);
         }
 
+        private async Task AddQuote(IMessage message)
+        {
+            if (message == null)
+            {
+                await ReplyAsync("That message ID doesn't match with any message in this channel.");
+                return;
+            }
+            var quote = new Quote
+            {
+                AuthorId = message.Author.Id.ToString(),
+                QuotedById = Context.User.Id.ToString(),
+                QuoteTime = message.Timestamp.UtcDateTime,
+                QuoteString = message.Content
+            };
+            await _dbContext.InsertAsync(quote);
+            await ReplyAsync($"Added quote (id {quote.Id}) to the database.");
+        }
+
         private async Task ReplyWithQuote(Quote quote)
         {
             var authorInfoTask = Context.Client.GetUserAsync(ulong.Parse(quote.AuthorId));
@@ -121,7 +120,8 @@ namespace Rem.Commands
             builder.WithColor(0, 255, 0);
             builder.WithDescription(quote.QuoteString);
             builder.WithThumbnailUrl(authorInfo.GetAvatarUrl());
-            builder.WithFooter($"#{quote.Id} by {quoterInfo.Username} on {quote.QuoteTime} UTC", quoterInfo.GetAvatarUrl());
+            builder.AddField("Timestamp", quote.QuoteTime);
+            builder.WithFooter($"#{quote.Id} - added by {quoterInfo.Username}", quoterInfo.GetAvatarUrl());
 
             await ReplyAsync("", embed: builder.Build());
         }
