@@ -42,6 +42,26 @@ namespace Rem.Commands
             await ReplyAsync("Added quote to the database.");
         }
 
+        [RequireRole("regulars")]
+        [Command("addquote"), Summary("Add a new quote to the quote database")]
+        public async Task AddQuote(ulong messageId)
+        {
+            var previousMessage = await Context.Channel.GetMessageAsync(messageId);
+            if (previousMessage == null)
+            {
+                await ReplyAsync("That message ID doesn't match with any message in this channel.");
+                return;
+            }
+            await _dbContext.InsertAsync(new Quote
+            {
+                AuthorId = previousMessage.Author.Id.ToString(),
+                QuotedById = Context.User.Id.ToString(),
+                QuoteTime = previousMessage.Timestamp.UtcDateTime,
+                QuoteString = previousMessage.Content
+            });
+            await ReplyAsync("Added quote to the database.");
+        }
+
         [Command("quote"), Summary("Retrieve a random quote")]
         public async Task GetQuote()
         {
