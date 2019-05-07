@@ -36,7 +36,7 @@ namespace Rem.Commands
             builder.AddField("User", $"{_client.CurrentUser} ({_client.CurrentUser.Id})");
             builder.AddField("Version", _botState.Version);
             builder.AddField("Modules installed", GetNonHiddenModules().Count());
-            builder.AddField("Commands available", GetNonHiddenCommands().Count());
+            builder.AddField("Commands available", FilterDuplicateCommandNames(GetNonHiddenCommands()).Count());
             builder.AddField("Uptime", GetUptimeString());
             builder.AddField("Latency", $"{_client.Latency}ms");
             builder.AddField("Source code", "https://github.com/wchill/Rem");
@@ -90,10 +90,10 @@ namespace Rem.Commands
             
             foreach (var module in GetNonHiddenModules())
             {
-                var commands = GetNonHiddenModuleCommands(module);
-                if (commands.Any())
+                var commandNames = FilterDuplicateCommandNames(GetNonHiddenModuleCommands(module));
+                if (commandNames.Any())
                 {
-                    builder.AddField(module.Name, string.Join("\n", commands.Select(command => command.Aliases.First())), true);
+                    builder.AddField(module.Name, string.Join("\n", commandNames), true);
                 }
             }
 
@@ -101,20 +101,29 @@ namespace Rem.Commands
         }
 
         [Command("help"), Summary("Get help for a command")]
-        public async Task GetHelp(string commandName)
+        public async Task GetHelp(string commandName, int page = 1)
         {
             var builder = new EmbedBuilder();
 
-            var commandInfo = GetNonHiddenCommands().Where(command => command.Aliases.Contains(commandName)).FirstOrDefault();
-            if (commandInfo == null)
+            var commandInfos = GetNonHiddenCommands().Where(command => command.Aliases.Contains(commandName)).ToArray();
+            if (!commandInfos.Any())
             {
                 await ReplyAsync($"Command \"{commandName}\" does not exist.");
                 return;
             }
 
+            if (page < 1 || page > commandInfos.Length)
+            {
+                await ReplyAsync("Invalid page specified.");
+                return;
+            }
+
+            var commandInfo = commandInfos[page - 1];
+
             builder.WithTitle(commandInfo.Name);
             builder.WithDescription(commandInfo.Summary);
             builder.WithColor(0, 255, 0);
+            builder.WithFooter($"Page {page} of {commandInfos.Length} - use {_botState.Prefix}help {commandName} <page> to view a different page");
 
             builder.AddField("Aliases", string.Join(' ', commandInfo.Aliases));
 
@@ -158,6 +167,11 @@ namespace Rem.Commands
         {
             var modules = GetNonHiddenModules();
             return modules.SelectMany(module => GetNonHiddenModuleCommands(module));
+        }
+
+        private HashSet<string> FilterDuplicateCommandNames(IEnumerable<CommandInfo> commands)
+        {
+            return new HashSet<string>(commands.Select(command => command.Aliases.First()));
         }
     }
 }
