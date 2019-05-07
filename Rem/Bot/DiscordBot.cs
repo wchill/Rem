@@ -67,6 +67,7 @@ namespace Rem.Bot
         private async Task InstallServices()
         {
             await _dbContext.CreateTableAsync<Models.Image>();
+            await _dbContext.CreateTableAsync<Models.Quote>();
 
             var types = Assembly.GetEntryAssembly().FindTypesWithAttribute<ServiceAttribute>().ToImmutableArray();
 

@@ -11,8 +11,8 @@ namespace Rem.Models
         [PrimaryKey, AutoIncrement, Column("_id")]
         public int Id { get; set; }
         public string QuoteString { get; set; }
-        public string QuotedBy { get; set; }
-        public DateTime QuotedAt { get; set; }
-        public int QuoteCount { get; set; }
+        public string AuthorId { get; set; }
+        public string QuotedById { get; set; }
+        public DateTime QuoteTime { get; set; }
     }
 }
