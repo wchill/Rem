@@ -22,6 +22,7 @@ namespace Rem.Bot
         public int BribeCount { get; set; }
         public HashSet<ulong> AdminList { get; set; }
         public string TranslatorApiKey { get; set; }
+        public HashSet<string> BannedRoles { get; set; }
 
         [JsonIgnore]
         public string FilePath { get; private set; }
@@ -39,6 +40,10 @@ namespace Rem.Bot
                 {
                     state.AdminList = new HashSet<ulong>();
                 }
+                if (state.BannedRoles == null)
+                {
+                    state.BannedRoles = new HashSet<string>();
+                }
                 Task.WaitAll(state.PersistState());
                 state.Version = version;
                 return state;
@@ -48,7 +53,8 @@ namespace Rem.Bot
                 var state = new BotState
                 {
                     FilePath = filePath,
-                    AdminList = new HashSet<ulong>()
+                    AdminList = new HashSet<ulong>(),
+                    BannedRoles = new HashSet<string>()
                 };
                 Task.WaitAll(state.PersistState());
                 state.Version = version;

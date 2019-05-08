@@ -98,6 +98,20 @@ namespace Rem.Bot
             if (!(message.HasStringPrefix(_state.Prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // Create a Command Context
             var context = new CommandContext(_client, message);
+
+            var user = context.User as SocketGuildUser;
+            if (user != null)
+            {
+                foreach (var role in user.Roles)
+                {
+                    if (_state.BannedRoles.Contains(role.Name.ToLower()))
+                    {
+                        await context.Channel.SendMessageAsync($"Role \"{role.Name}\" is banned from using bot commands.");
+                        return;
+                    }
+                }
+            }
+
             // Execute the command. (result does not indicate a return value, 
             // rather an object stating if the command executed successfully)
             var result = await _commands.ExecuteAsync(context, argPos, _services);

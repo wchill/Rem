@@ -48,6 +48,34 @@ namespace Rem.Commands
         }
 
         [RequireOwner]
+        [Command("banrole"), Summary("Ban a role")]
+        public async Task BanRole(string role)
+        {
+            if (_botState.BannedRoles.Contains(role.ToLower()))
+            {
+                await ReplyAsync("That role is already banned.");
+                return;
+            }
+
+            _botState.BannedRoles.Add(role);
+            await ReplyAsync($"Added {role} to the banned roles list.");
+        }
+
+        [RequireOwner]
+        [Command("unbanrole"), Summary("Unban a role")]
+        public async Task UnbanRole(string role)
+        {
+            if (!_botState.BannedRoles.Contains(role.ToLower()))
+            {
+                await ReplyAsync("That role is not banned.");
+                return;
+            }
+
+            _botState.BannedRoles.Remove(role);
+            await ReplyAsync($"Removed {role} from the banned roles list.");
+        }
+
+        [RequireOwner]
         [Command("reloadsettings"), Summary("Reload settings")]
         public async Task ReloadSettings()
         {
