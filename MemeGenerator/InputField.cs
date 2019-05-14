@@ -19,7 +19,7 @@ namespace MemeGenerator
         public Point BottomRight { get; }
         public double PaddingPercent { get; }
         public IReadOnlyList<Point> Mask { get; }
-        private readonly IReadOnlyList<IInputRenderer> _renderers;
+        public IReadOnlyList<IInputRenderer> Renderers { get; }
 
         private int WidthTop => TopRight.X - TopLeft.X;
         private int WidthBottom => BottomRight.X - BottomLeft.X;
@@ -39,7 +39,7 @@ namespace MemeGenerator
             BottomRight = bottomRight;
             PaddingPercent = paddingPercent;
             Mask = mask ?? new[] { topLeft, topRight, bottomLeft, bottomRight };
-            _renderers = renderers;
+            Renderers = renderers;
 
             if (TopLeft.X < 0 || TopLeft.Y < 0 || topRight.X < 0 || topRight.Y < 0 || bottomLeft.X < 0 || bottomLeft.Y < 0 || bottomRight.X < 0 || bottomRight.Y < 0)
             {
@@ -51,7 +51,7 @@ namespace MemeGenerator
                 throw new ArgumentException("Padding percentage must be between 0 and 1 inclusive.");
             }
 
-            if (!_renderers.Any())
+            if (!Renderers.Any())
             {
                 throw new ArgumentException("At least one renderer must be specified.");
             }
@@ -60,7 +60,7 @@ namespace MemeGenerator
         public bool Apply(IImageProcessingContext<Rgba32> context, object input)
         {
             var success = false;
-            foreach (var renderer in _renderers)
+            foreach (var renderer in Renderers)
             {
                 // Attempt to render this input with each renderer until one succeeds
                 success = renderer.Render(context, DrawingArea, input);

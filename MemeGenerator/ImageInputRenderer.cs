@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
@@ -12,13 +13,13 @@ namespace MemeGenerator
 {
     public class ImageInputRenderer : IInputRenderer
     {
-        private readonly ImageScalingMode _scalingMode;
-        private readonly GraphicsOptions _graphicsOptions;
+        public ImageScalingMode ScalingMode { get; }
+        public GraphicsOptions GraphicsOptions { get; }
 
         public ImageInputRenderer(ImageScalingMode scalingMode, GraphicsOptions graphicsOptions)
         {
-            _scalingMode = scalingMode;
-            _graphicsOptions = graphicsOptions;
+            ScalingMode = scalingMode;
+            GraphicsOptions = graphicsOptions;
         }
 
         public bool Render(IImageProcessingContext<Rgba32> context, Rectangle area, object input)
@@ -44,7 +45,7 @@ namespace MemeGenerator
                 return false;
             }
 
-            switch (_scalingMode)
+            switch (ScalingMode)
             {
                 case ImageScalingMode.None:
                     ApplyNone(context, area, image);
@@ -83,7 +84,7 @@ namespace MemeGenerator
                     var newHeight = Math.Min(area.Height, img2.Height);
                     img2.Mutate(ctx => ctx.Crop(newWidth, newHeight));
                 }
-                context.DrawImage(img2, area.Location, _graphicsOptions);
+                context.DrawImage(img2, area.Location, GraphicsOptions);
             }
         }
 
@@ -102,7 +103,7 @@ namespace MemeGenerator
                 var sx = area.X + (area.Width - img2.Width) / 2;
                 var sy = area.Y + (area.Height - img2.Height) / 2;
 
-                context.DrawImage(img2, new Point(sx, sy), _graphicsOptions);
+                context.DrawImage(img2, new Point(sx, sy), GraphicsOptions);
             }
         }
 
@@ -117,7 +118,7 @@ namespace MemeGenerator
                     Size = new Size(area.Width, area.Height)
                 }));
 
-                context.DrawImage(img2, area.Location, _graphicsOptions);
+                context.DrawImage(img2, area.Location, GraphicsOptions);
             }
         }
         
@@ -147,7 +148,7 @@ namespace MemeGenerator
                     img2.Mutate(ctx => ctx.Crop(new Rectangle(x, y, newWidth, newHeight)));
                 }
 
-                context.DrawImage(img2, area.Location, _graphicsOptions);
+                context.DrawImage(img2, area.Location, GraphicsOptions);
             }
         }
 
@@ -170,7 +171,7 @@ namespace MemeGenerator
                 var sx = area.X + (area.Width - img2.Width) / 2;
                 var sy = area.Y + (area.Height - img2.Height) / 2;
 
-                context.DrawImage(img2, new Point(sx, sy), _graphicsOptions);
+                context.DrawImage(img2, new Point(sx, sy), GraphicsOptions);
             }
         }
 

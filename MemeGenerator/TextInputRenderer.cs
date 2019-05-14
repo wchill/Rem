@@ -1,5 +1,8 @@
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
+using MemeGenerator.JsonConverters;
+using Newtonsoft.Json;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -9,32 +12,34 @@ namespace MemeGenerator
 {
     public class TextInputRenderer : IInputRenderer
     {
-        private readonly Font _font;
-        private readonly IPen<Rgba32> _pen;
-        private readonly IBrush<Rgba32> _brush;
-        private readonly HorizontalAlignment _horizontalAlignment;
-        private readonly VerticalAlignment _verticalAlignment;
-        private readonly bool _preferNoScaling;
+        [JsonConverter(typeof(FontJsonConverter))]
+        public Font Font { get; }
+        [JsonConverter(typeof(PenJsonConverter))]
+        public IPen<Rgba32> Pen { get; }
+        public IBrush<Rgba32> Brush { get; }
+        public HorizontalAlignment HorizontalAlignment { get; }
+        public VerticalAlignment VerticalAlignment { get; }
+        public bool PreferNoScaling { get; }
 
         public TextInputRenderer(Font font, IPen<Rgba32> pen, IBrush<Rgba32> brush, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
             bool preferNoScaling)
         {
-            _font = font;
-            _pen = pen;
-            _brush = brush;
-            _horizontalAlignment = horizontalAlignment;
-            _verticalAlignment = verticalAlignment;
-            _preferNoScaling = preferNoScaling;
+            Font = font;
+            Pen = pen;
+            Brush = brush;
+            HorizontalAlignment = horizontalAlignment;
+            VerticalAlignment = verticalAlignment;
+            PreferNoScaling = preferNoScaling;
         }
 
         public Font GetAdjustedFont(int width, int height, string text)
         {
-            if (_preferNoScaling && WillTextFit(width, height, text, _font))
+            if (PreferNoScaling && WillTextFit(width, height, text, Font))
             {
-                return _font;
+                return Font;
             }
 
-            var bestFont = BinarySearchFontSize(width, height, text, _font);
+            var bestFont = BinarySearchFontSize(width, height, text, Font);
             if (bestFont == null)
             {
                 throw new ArgumentException("Unable to find a font size that fit the given constraints.");
@@ -58,14 +63,14 @@ namespace MemeGenerator
             var scaledFont = GetAdjustedFont(width, height, text);
             var textGraphicOptions = new TextGraphicsOptions(true)
             {
-                HorizontalAlignment = _horizontalAlignment,
-                VerticalAlignment = _verticalAlignment,
+                HorizontalAlignment = HorizontalAlignment,
+                VerticalAlignment = VerticalAlignment,
                 WrapTextWidth = width
             };
             
-            var renderY = _verticalAlignment == VerticalAlignment.Center ? height / 2 + y : y;
+            var renderY = VerticalAlignment == VerticalAlignment.Center ? height / 2 + y : y;
 
-            context.DrawText(textGraphicOptions, text, scaledFont, _brush, _pen, new PointF(x, renderY));
+            context.DrawText(textGraphicOptions, text, scaledFont, Brush, Pen, new PointF(x, renderY));
 
             return true;
         }
@@ -103,8 +108,8 @@ namespace MemeGenerator
         {
             return TextMeasurer.MeasureBounds(text, new RendererOptions(font)
             {
-                HorizontalAlignment = _horizontalAlignment,
-                VerticalAlignment = _verticalAlignment,
+                HorizontalAlignment = HorizontalAlignment,
+                VerticalAlignment = VerticalAlignment,
                 WrappingWidth = wrapWidth
             });
         }

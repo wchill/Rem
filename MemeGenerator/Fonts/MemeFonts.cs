@@ -56,10 +56,15 @@ namespace MemeGenerator.Fonts
         public static FontCollection Collection => LazyFontData.Value.Item1;
         public static IReadOnlyDictionary<AvailableFonts, FontDescription> Descriptions => LazyFontData.Value.Item2;
 
-        public static Font GetFont(AvailableFonts fontName, float size = 20)
+        public static Font GetFont(AvailableFonts fontName, float size = 20, FontStyle style = FontStyle.Regular)
         {
             var description = Descriptions[fontName];
-            return Collection.CreateFont(description.FontFamily, size);
+            return GetFont(description.FontFamily, size, style);
+        }
+
+        public static Font GetFont(string fontFamily, float size = 20, FontStyle style = FontStyle.Regular)
+        {
+            return Collection.CreateFont(fontFamily, size, style);
         }
 
         public static Font GetDefaultFont()
