@@ -43,8 +43,7 @@ namespace MemeGenerator
         
         public MemeTemplate Build()
         {
-            var img = Image.Load(_imagePath);
-            return new MemeTemplate(_name, _description, img, _inputFields);
+            return new MemeTemplate(_name, _description, _imagePath, _inputFields);
         }
     }
 }

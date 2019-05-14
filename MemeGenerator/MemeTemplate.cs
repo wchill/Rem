@@ -12,20 +12,23 @@ namespace MemeGenerator
         public string Name { get; }
         public string Description { get; }
         public IReadOnlyList<InputField> InputFields { get; }
-        private readonly Image<Rgba32> _baseImage;
+        public string ImagePath { get; }
+        private readonly Lazy<Image<Rgba32>> BaseImage;
 
-        public MemeTemplate(string name, string description, Image<Rgba32> baseImage, IReadOnlyList<InputField> inputFields)
+        public MemeTemplate(string name, string description, string imagePath, IReadOnlyList<InputField> inputFields)
         {
             Name = name;
             Description = description;
-            _baseImage = baseImage;
+            ImagePath = imagePath;
             InputFields = inputFields;
+
+            BaseImage = new Lazy<Image<Rgba32>>(() => Image.Load(ImagePath));
         }
 
         private Image<Rgba32> CreateMask()
         {
             var maskAreas = InputFields.Select(field => field.Mask);
-            return MaskHelper.CreateMaskFromImage(_baseImage, maskAreas);
+            return MaskHelper.CreateMaskFromImage(BaseImage.Value, maskAreas);
         }
 
         private Image<Rgba32> CreateLayer(Image<Rgba32> mask, InputField inputField, IReadOnlyList<object> inputArray)
@@ -42,12 +45,7 @@ namespace MemeGenerator
                     {
                         throw new ArgumentException("Unable to handle input.");
                     }
-                });
 
-                layer.Save($"{inputField.Name}.png");
-
-                layer.Mutate(layerCtx => 
-                {
                     // Project this layer into the correct position
                     var transformMatrix =
                         ImageProjectionHelper.CalculateProjectiveTransformationMatrix(inputField.MaxWidth, inputField.MaxHeight,
@@ -105,7 +103,7 @@ namespace MemeGenerator
 
         public Image<Rgba32> CreateMeme(IReadOnlyList<Image<Rgba32>> allLayers)
         {
-            var meme = _baseImage.Clone();
+            var meme = BaseImage.Value.Clone();
             try
             {
                 meme.Mutate(ctx =>
@@ -132,14 +130,14 @@ namespace MemeGenerator
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposedValue)
+            if (_disposedValue || !BaseImage.IsValueCreated)
             {
                 return;
             }
 
             if (disposing)
             {
-                _baseImage.Dispose();
+                BaseImage.Value.Dispose();
             }
             _disposedValue = true;
         }

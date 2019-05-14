@@ -1,8 +1,6 @@
 using System;
 using System.Numerics;
 using MathNet.Numerics.LinearAlgebra;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 
 namespace MemeGenerator
