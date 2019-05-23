@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Rem.Bot;
+using Sentry;
 
 namespace Rem
 {
@@ -50,9 +52,15 @@ namespace Rem
             }
             Console.WriteLine($"Bot build version: {version}");
 
-            var bot = new DiscordBot(version, configPath, dbPath);
-            await bot.Start();
-            await Task.Delay(-1);
+            using (SentrySdk.Init(o => {
+                o.Release = version;
+                o.Dsn = Debugger.IsAttached ? null : new Dsn("https://7f5a6bc825aa435596f967f477e89bb7@sentry.io/1466980");
+            }))
+            {
+                var bot = new DiscordBot(version, configPath, dbPath);
+                await bot.Start();
+                await Task.Delay(-1);
+            }
 
             return 0;
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using Rem.Attributes;
 using Rem.Bot;
 using Rem.Extensions;
@@ -112,8 +113,9 @@ namespace Rem.Commands
 
         private async Task ReplyWithQuote(Quote quote)
         {
-            var authorInfoTask = Context.Client.GetUserAsync(ulong.Parse(quote.AuthorId));
-            var quoterInfoTask = Context.Client.GetUserAsync(ulong.Parse(quote.QuotedById));
+            var restClient = ((DiscordSocketClient)Context.Client).Rest;
+            var authorInfoTask = restClient.GetUserAsync(ulong.Parse(quote.AuthorId));
+            var quoterInfoTask = restClient.GetUserAsync(ulong.Parse(quote.QuotedById));
             var users = await Task.WhenAll(authorInfoTask, quoterInfoTask);
 
             var authorInfo = users[0];

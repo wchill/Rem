@@ -5,13 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fonts\animeace.ttf" />
-    <None Remove="Fonts\Anton.ttf" />
-    <None Remove="Fonts\MangaTemple.ttf" />
-    <None Remove="Fonts\OpenSans.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Fonts\AnimeAce.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
