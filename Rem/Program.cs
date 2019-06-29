@@ -11,11 +11,6 @@ namespace Rem
     {
         static int Main(string[] args)
         {
-            return new Program().MainAsync(args).Result;
-        }
-
-        public async Task<int> MainAsync(string[] args)
-        {
             string configPath;
             string dbPath;
             string version = File.ReadAllText("VERSION.txt");
@@ -39,7 +34,7 @@ namespace Rem
 
             Console.WriteLine($"Using {configPath} for config file");
             Console.WriteLine($"Using {dbPath} for SQLite database");
-            
+
             if (!File.Exists(configPath))
             {
                 Console.Error.WriteLine("Config file does not exist. One will be created. Please fill in the values.");
@@ -52,15 +47,8 @@ namespace Rem
             }
             Console.WriteLine($"Bot build version: {version}");
 
-            using (SentrySdk.Init(o => {
-                o.Release = version;
-                o.Dsn = Debugger.IsAttached ? null : new Dsn("https://7f5a6bc825aa435596f967f477e89bb7@sentry.io/1466980");
-            }))
-            {
-                var bot = new DiscordBot(version, configPath, dbPath);
-                await bot.Start();
-                await Task.Delay(-1);
-            }
+            var bot = new DiscordBot(version, configPath, dbPath);
+            Task.WaitAll(bot.Start(), Task.Delay(-1));
 
             return 0;
         }

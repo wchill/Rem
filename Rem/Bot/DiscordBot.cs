@@ -14,6 +14,8 @@ using Rem.Attributes;
 using Rem.Extensions;
 using Rem.Services;
 using Rem.Utilities;
+using Sentry;
+using Sentry.Protocol;
 using SQLite;
 
 namespace Rem.Bot
@@ -30,6 +32,12 @@ namespace Rem.Bot
         public DiscordBot(string version, string configPath, string dbPath)
         {
             _state = BotState.Initialize(version, configPath);
+            SentrySdk.Init(new SentryOptions
+            {
+                Dsn = new Dsn(_state.SentryDsn),
+                Debug = true,
+                AttachStacktrace = true
+            });
             _dbContext = new SQLiteAsyncConnection(dbPath);
 
             _completionSource = new TaskCompletionSource<Task>();
@@ -111,12 +119,25 @@ namespace Rem.Bot
                     }
                 }
             }
-
-            // Execute the command. (result does not indicate a return value, 
-            // rather an object stating if the command executed successfully)
-            var result = await _commands.ExecuteAsync(context, argPos, _services);
-            if (!result.IsSuccess)
+            else
             {
+                return;
+            }
+            
+            SentrySdk.WithScope(async scope =>
+            {
+                scope.User = new User
+                {
+                    Id = user.Id.ToString(),
+                    Username = $"{user.Username}#{user.DiscriminatorValue}"
+                };
+                scope.SetExtra("command", message.Content);
+
+                // Execute the command. (result does not indicate a return value, 
+                // rather an object stating if the command executed successfully)
+                var result = await _commands.ExecuteAsync(context, argPos, _services);
+                if (result.IsSuccess) return;
+
                 switch (result.Error)
                 {
                     case CommandError.Exception:
@@ -124,6 +145,7 @@ namespace Rem.Bot
                         {
                             await Console.Error.WriteLineAsync($"Error encountered when handling command {message}:");
                             await Console.Error.WriteLineAsync(execResult.Exception.ToString());
+                            SentrySdk.CaptureException(execResult.Exception);
                         }
                         break;
                     case CommandError.UnknownCommand:
@@ -160,7 +182,7 @@ namespace Rem.Bot
                 {
                     Debugger.Break();
                 }
-            }
+            });
 
             await _state.PersistState();
         }

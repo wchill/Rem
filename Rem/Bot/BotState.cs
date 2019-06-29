@@ -13,6 +13,7 @@ namespace Rem.Bot
     {
         // These values cannot change without restarting bot
         public string ClientSecret { get; set; }
+        public string SentryDsn { get; set; }
         [JsonIgnore]
         public string Version { get; private set; }
 
