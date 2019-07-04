@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Rem.Attributes;
 using Rem.Bot;
 using Rem.Models;
-using SQLite;
 using Image = Rem.Models.Image;
 
 namespace Rem.Commands
@@ -16,7 +17,7 @@ namespace Rem.Commands
     [Name("Headpats")]
     public class PatModule : ModuleBase
     {
-        private readonly SQLiteAsyncConnection _dbContext;
+        private readonly BotContext _dbContext;
         private readonly Random _random;
         private readonly BotState _botState;
 
@@ -27,7 +28,7 @@ namespace Rem.Commands
             {ImageType.Cuddle, Tuple.Create("{0} was cuddled.", "{0} was cuddled by {1}.")}
         };
 
-        public PatModule(SQLiteAsyncConnection dbConnection, BotState state)
+        public PatModule(BotContext dbConnection, BotState state)
         {
             _dbContext = dbConnection;
             _random = new Random();
@@ -54,14 +55,13 @@ namespace Rem.Commands
 
         private async Task HandleImageCommand(ImageType type, IUser user)
         {
-            var table = _dbContext.Table<Image>();
-            var imageCount = await table.CountAsync(image => image.Type == type);
+            var imageCount = await _dbContext.Images.CountAsync(image => image.Type == type);
             if (imageCount == 0)
             {
                 await ReplyAsync($"There are no {type.ToFriendlyString()} images in the database, add some with -addimage {type.ToFriendlyString()} <url>");
                 return;
             }
-            var imageUrl = await table.Where(image => image.Type == type).OrderBy(p => p.Id).Skip(_random.Next(imageCount)).FirstAsync();
+            var imageUrl = await _dbContext.Images.Where(image => image.Type == type).OrderBy(p => p.Id).Skip(_random.Next(imageCount)).FirstAsync();
 
             var userInfo = user ?? Context.User;
             var isSelf = userInfo == Context.User;
@@ -100,8 +100,10 @@ namespace Rem.Commands
                         return;
                 }
 
-                await _dbContext.InsertAsync(new Image { Url = url, Type = t });
-                var count = await _dbContext.Table<Image>().CountAsync(image => image.Type == t);
+                _dbContext.Add(new Image {Url = url, Type = t});
+                await _dbContext.SaveChangesAsync();
+
+                var count = await _dbContext.Images.CountAsync(image => image.Type == t);
                 await ReplyAsync($"Added image to the database ({count} total).");
             }
             catch (Exception)
@@ -116,12 +118,14 @@ namespace Rem.Commands
         {
             try
             {
-                var numRows = await _dbContext.Table<Image>().Where(x => x.Url == url).DeleteAsync();
-                await ReplyAsync($"Deleted {numRows} image(s) from the database.");
+                _dbContext.Images.Remove(_dbContext.Images.First(x => x.Url == url));
+                await _dbContext.SaveChangesAsync();
+
+                await ReplyAsync("Deleted image from the database.");
             }
             catch (Exception)
             {
-                await ReplyAsync($"There was an error deleting the image.");
+                await ReplyAsync("There was an error deleting the image.");
             }
         }
     }

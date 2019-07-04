@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SQLite;
 
 namespace Rem.Bot
 {
@@ -36,7 +35,7 @@ namespace Rem.Bot
             try
             {
                 var state = JsonConvert.DeserializeObject<BotState>(File.ReadAllText(filePath));
-                state.FilePath = filePath;
+                state.FilePath = Path.GetFullPath(filePath);
                 if (state.AdminList == null)
                 {
                     state.AdminList = new HashSet<ulong>();

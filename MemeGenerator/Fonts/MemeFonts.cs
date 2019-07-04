@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using SixLabors.Fonts;
 
 namespace MemeGenerator.Fonts
@@ -47,7 +48,7 @@ namespace MemeGenerator.Fonts
                     foreach (var font in Enum.GetValues(typeof(AvailableFonts)))
                     {
                         var fontEnum = (AvailableFonts)font;
-                        collection.Install(Path.Join(BasePath, fontEnum.ToFileName()), out var fontDescription);
+                        collection.Install(Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), BasePath, fontEnum.ToFileName()), out var fontDescription);
                         descriptions[fontEnum] = fontDescription;
                     }
                     return Tuple.Create(collection, descriptions);

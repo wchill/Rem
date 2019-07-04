@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Rem.Attributes;
 using Rem.Bot;
 using Rem.Extensions;
 using Rem.Models;
-using SQLite;
 
 namespace Rem.Commands
 {
     [Name("Quote")]
     public class QuoteModule : ModuleBase
     {
-        private readonly SQLiteAsyncConnection _dbContext;
+        private readonly BotContext _dbContext;
         private readonly Random _random;
         private readonly BotState _botState;
 
-        public QuoteModule(SQLiteAsyncConnection dbConnection, BotState state)
+        public QuoteModule(BotContext dbConnection, BotState state)
         {
             _dbContext = dbConnection;
             _random = new Random();
@@ -47,9 +47,8 @@ namespace Rem.Commands
         [Command("quote"), Summary("Retrieve a random quote")]
         public async Task GetQuote()
         {
-            var table = _dbContext.Table<Quote>();
-            var count = await table.CountAsync();
-            var quote = await table.Skip(_random.Next(count)).FirstOrDefaultAsync();
+            var count = await _dbContext.Quotes.CountAsync();
+            var quote = await _dbContext.Quotes.Skip(_random.Next(count)).FirstOrDefaultAsync();
             if (quote == null)
             {
                 await ReplyAsync("No quotes are in the database.");
@@ -61,23 +60,20 @@ namespace Rem.Commands
         [Command("quote"), Summary("Retrieve a quote by id")]
         public async Task GetQuote(int id)
         {
-            try
+            var quote = await _dbContext.Quotes.FindAsync(id);
+            if (quote == null)
             {
-                var quote = await _dbContext.GetAsync<Quote>(id);
-                await ReplyWithQuote(quote);
+                await ReplyAsync("That quote ID isn't valid.");
+                return;
             }
-            catch (InvalidOperationException)
-            {
-                await ReplyAsync("No quotes are in the database.");
-            }
+            await ReplyWithQuote(quote);
         }
 
         [Command("quote"), Summary("Retrieve a random quote by a user")]
         public async Task GetQuote(IUser user)
         {
-            var table = _dbContext.Table<Quote>();
             var strId = user.Id.ToString();
-            var query = table.Where(q => q.AuthorId == strId);
+            var query = _dbContext.Quotes.Where(q => q.AuthorId == strId);
             var count = await query.CountAsync();
             var quote = await query.Skip(_random.Next(count)).FirstOrDefaultAsync();
             if (quote == null)
@@ -107,7 +103,8 @@ namespace Rem.Commands
                 QuoteTime = message.Timestamp.UtcDateTime,
                 QuoteString = message.Content
             };
-            await _dbContext.InsertAsync(quote);
+            _dbContext.Add(quote);
+            await _dbContext.SaveChangesAsync();
             await ReplyAsync($"Added quote (id {quote.Id}) to the database.");
         }
 

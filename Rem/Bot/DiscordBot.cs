@@ -9,14 +9,15 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Rem.Attributes;
 using Rem.Extensions;
+using Rem.Models;
 using Rem.Services;
 using Rem.Utilities;
 using Sentry;
 using Sentry.Protocol;
-using SQLite;
 
 namespace Rem.Bot
 {
@@ -25,12 +26,13 @@ namespace Rem.Bot
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly BotState _state;
-        private readonly SQLiteAsyncConnection _dbContext;
-        private readonly TaskCompletionSource<Task> _completionSource;
         private IServiceProvider _services;
 
-        public DiscordBot(string version, string configPath, string dbPath)
+        private readonly string _dbConnectionString;
+
+        public DiscordBot(string version, string configPath, string dbConnectionString)
         {
+            _dbConnectionString = dbConnectionString;
             _state = BotState.Initialize(version, configPath);
             SentrySdk.Init(new SentryOptions
             {
@@ -38,22 +40,26 @@ namespace Rem.Bot
                 Debug = true,
                 AttachStacktrace = true
             });
-            _dbContext = new SQLiteAsyncConnection(dbPath);
-
-            _completionSource = new TaskCompletionSource<Task>();
+            
             _client = new DiscordSocketClient();
             _client.Log += Log;
-            _client.Ready += () =>
-            {
-                _state.ConnectionTime = DateTime.UtcNow;
-                _completionSource.SetResult(Task.CompletedTask);
-                Log($"Running as user {_client.CurrentUser.Username} ({_client.CurrentUser.Id})");
-                return Task.CompletedTask;
-            };
+            _client.Ready += OnClientReady;
 
             _commands = new CommandService();
             _commands.Log += Log;
             _services = null;
+        }
+
+        private async Task OnClientReady()
+        {
+            _state.ConnectionTime = DateTime.UtcNow;
+            await Log($"Running as user {_client.CurrentUser.Username} ({_client.CurrentUser.Id})");
+
+            var guilds = await _client.Rest.GetGuildsAsync();
+            foreach (var guild in guilds)
+            {
+                //_dbContext.
+            }
         }
 
         private static Task Log(LogMessage msg)
@@ -74,18 +80,15 @@ namespace Rem.Bot
 
         private async Task InstallServices()
         {
-            await _dbContext.CreateTableAsync<Models.Image>();
-            await _dbContext.CreateTableAsync<Models.Quote>();
-
-            var types = Assembly.GetEntryAssembly().FindTypesWithAttribute<ServiceAttribute>().ToImmutableArray();
+            var types = Assembly.GetExecutingAssembly().FindTypesWithAttribute<ServiceAttribute>().ToImmutableArray();
 
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
-                .AddSingleton(_dbContext)
                 .AddSingleton(_state)
                 .AddSingleton(MemeLoader.LoadAllTemplates())
                 .AddServices(types)
+                .AddDbContextPool<BotContext>(options => { options.UseSqlite(_dbConnectionString); })
                 .BuildServiceProvider();
         }
 
@@ -107,6 +110,7 @@ namespace Rem.Bot
             // Create a Command Context
             var context = new CommandContext(_client, message);
 
+            // TODO: This only handles messages from servers, not DMs. Need to implement support for DMs.
             var user = context.User as SocketGuildUser;
             if (user != null)
             {
@@ -132,6 +136,7 @@ namespace Rem.Bot
                     Username = $"{user.Username}#{user.DiscriminatorValue}"
                 };
                 scope.SetExtra("command", message.Content);
+                scope.SetExtra("message_channel", $"#{message.Channel.Name} ({message.Channel.Id})");
 
                 // Execute the command. (result does not indicate a return value, 
                 // rather an object stating if the command executed successfully)
@@ -193,8 +198,6 @@ namespace Rem.Bot
             await InstallCommands();
             await _client.LoginAsync(TokenType.Bot, _state.ClientSecret);
             await _client.StartAsync();
-
-            await _completionSource.Task;
             _services.RunInitMethods();
 
             await _client.SetGameAsync($"{_state.Version}");
