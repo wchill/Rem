@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.2-sdk AS build-env
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
 
 WORKDIR /app/
 
@@ -22,7 +22,7 @@ COPY Tests/. .
 ENTRYPOINT ["dotnet", "test", "--logger:trx"]
 
 # Build runtime image
-FROM microsoft/dotnet:2.2-runtime AS runtime
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS runtime
 WORKDIR /app/
 COPY --from=build-env /app/Rem/out .
 ENTRYPOINT ["dotnet", "Rem.dll"]
