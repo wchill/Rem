@@ -17,8 +17,17 @@ namespace Rem
 {
     class Program
     {
+#if DEBUG
+        private const string DefaultEnvironmentName = "Development";
+#else
+        private const string DefaultEnvironmentName = "Production";
+#endif
         static int Main(string[] args)
         {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNET_ENVIRONMENT") ??
+                                  Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
+                                  DefaultEnvironmentName;
+
             string configPath;
             string appsettingsPath;
             string version = File.ReadAllText("VERSION.txt");
@@ -52,7 +61,8 @@ namespace Rem
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(appsettingsPath, optional: false, reloadOnChange: true);
+                .AddJsonFile(Path.Join(appsettingsPath, "appsettings.json"), optional: false, reloadOnChange: true)
+                .AddJsonFile(Path.Join(appsettingsPath, $"appsettings.{environmentName}.json"), optional: true, reloadOnChange: true);
             var configuration = builder.Build();
             var connectionString = configuration.GetConnectionString("Database");
 
@@ -69,14 +79,15 @@ namespace Rem
             var bot = new DiscordBot(version, configPath, connectionString);
             var botTask = bot.Start();
 
-            var webserverTask = CreateWebHostBuilder(args).Build().StartAsync(source.Token);
+            var webserverTask = CreateWebHostBuilder(args, configuration).Build().StartAsync(source.Token);
             Task.WaitAll(botTask, webserverTask, Task.Delay(-1, source.Token));
 
             return 0;
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IConfiguration configuration) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseConfiguration(configuration)
                 .UseStartup<Startup>();
     }
 }
