@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Rem.Models
@@ -25,6 +26,7 @@ namespace Rem.Models
     
     public class Image
     {
+        [Key]
         public int Id { get; set; }
         public string Url { get; set; }
         public ImageType Type { get; set; }

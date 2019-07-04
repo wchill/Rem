@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Rem.Bot;
+using Rem.Models;
 using Rem.WebApi;
 using Sentry;
 
@@ -53,6 +55,14 @@ namespace Rem
                 .AddJsonFile(appsettingsPath, optional: false, reloadOnChange: true);
             var configuration = builder.Build();
             var connectionString = configuration.GetConnectionString("Database");
+
+            var dbContextOptionsBuilder = new DbContextOptionsBuilder<BotContext>();
+            dbContextOptionsBuilder.UseSqlite(connectionString);
+
+            using (var dbContext = new BotContext(dbContextOptionsBuilder.Options))
+            {
+                dbContext.Database.Migrate();
+            }
 
             var source = new CancellationTokenSource();
 
