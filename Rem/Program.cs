@@ -57,7 +57,9 @@ namespace Rem
                 BotState.Initialize(version, configPath);
                 return 1;
             }
+            Console.WriteLine($"Running in {environmentName}");
             Console.WriteLine($"Bot build version: {version}");
+            Console.WriteLine($"Loading appsettings from {appsettingsPath}");
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
