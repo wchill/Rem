@@ -5,6 +5,7 @@ WORKDIR /app/
 # Copy csproj and restore as distinct layers
 COPY Rem/*.csproj ./Rem/
 COPY MemeGenerator/*.csproj ./MemeGenerator/
+COPY BabelJam/*.csproj ./BabelJam/
 WORKDIR /app/Rem/
 RUN dotnet restore
 
@@ -12,6 +13,7 @@ RUN dotnet restore
 WORKDIR /app/
 COPY Rem/. ./Rem/
 COPY MemeGenerator/. ./MemeGenerator/
+COPY BabelJam/. ./BabelJam/
 WORKDIR /app/Rem/
 RUN dotnet publish -c Release -o out
 
