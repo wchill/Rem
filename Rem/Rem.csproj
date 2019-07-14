@@ -127,14 +127,15 @@
     <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="Fastenshtein" Version="1.0.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="RestSharp" Version="106.6.9" />
+    <PackageReference Include="RestSharp" Version="106.6.10" />
     <PackageReference Include="Sentry" Version="1.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BabelJam\BabelJam.csproj" />
     <ProjectReference Include="..\MemeGenerator\MemeGenerator.csproj" />
   </ItemGroup>
 

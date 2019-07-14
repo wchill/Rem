@@ -68,7 +68,6 @@ namespace Rem.Commands
             catch (ArgumentException)
             {
                 await ReplyAsync("Translate API has not been set up.");
-                return;
             }
         }
 

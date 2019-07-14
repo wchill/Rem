@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BabelJam\BabelJam.csproj" />
     <ProjectReference Include="..\MemeGenerator\MemeGenerator.csproj" />
   </ItemGroup>
 

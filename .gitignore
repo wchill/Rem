@@ -330,3 +330,4 @@ ASALocalRun/
 .mfractor/
 
 *.db
+settings.json
