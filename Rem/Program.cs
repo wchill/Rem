@@ -81,8 +81,9 @@ namespace Rem
             var bot = new DiscordBot(version, configPath, connectionString);
             var botTask = bot.Start();
 
-            var webserverTask = CreateWebHostBuilder(args, configuration).Build().StartAsync(source.Token);
-            Task.WaitAll(botTask, webserverTask, Task.Delay(-1, source.Token));
+            //var webserverTask = CreateWebHostBuilder(args, configuration).Build().StartAsync(source.Token);
+            //Task.WaitAll(botTask, webserverTask, Task.Delay(-1, source.Token));
+            Task.WaitAll(botTask, Task.Delay(-1, source.Token));
 
             return 0;
         }
