@@ -1,45 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\0.png" />
-    <None Remove="Images\1.png" />
-    <None Remove="Images\2.png" />
-    <None Remove="Images\3.png" />
-    <None Remove="Images\4.png" />
-    <None Remove="Images\5.png" />
-    <None Remove="Images\6.png" />
-    <None Remove="Images\7.png" />
-    <None Remove="Images\8.png" />
-    <None Remove="Images\9.png" />
-    <None Remove="Images\heatingup.png" />
-    <None Remove="Images\MemeTemplates\Coma.jpg" />
-    <None Remove="Images\MemeTemplates\CrystalOfTruth.png" />
-    <None Remove="Images\MemeTemplates\DailyStruggle.png" />
-    <None Remove="Images\MemeTemplates\Disappointment.png" />
-    <None Remove="Images\MemeTemplates\DistractedBoyfriend.jpg" />
-    <None Remove="Images\MemeTemplates\DogBite.png" />
-    <None Remove="Images\MemeTemplates\GruPlan.png" />
-    <None Remove="Images\MemeTemplates\KaibasDefeat.png" />
-    <None Remove="Images\MemeTemplates\KomiPaper.png" />
-    <None Remove="Images\MemeTemplates\LightBulb.png" />
-    <None Remove="Images\MemeTemplates\Pigeon.jpg" />
-    <None Remove="Images\MemeTemplates\Pills.jpg" />
-    <None Remove="Images\MemeTemplates\ScrollOfTruth.jpg" />
-    <None Remove="Images\MemeTemplates\SurprisedPikachu.png" />
-    <None Remove="Images\MemeTemplates\TrolleyProblem.png" />
-    <None Remove="VERSION.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Content Include="Images\HeatingUp\0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -126,28 +92,15 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="Fastenshtein" Version="1.0.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
     <PackageReference Include="Sentry" Version="1.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BabelJam\BabelJam.csproj" />
     <ProjectReference Include="..\MemeGenerator\MemeGenerator.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System">
-      <HintPath>System</HintPath>
-    </Reference>
-    <Reference Include="System.Web">
-      <HintPath>System.Web</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

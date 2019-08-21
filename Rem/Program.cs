@@ -1,75 +1,51 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Rem.Bot;
 using Rem.Models;
-using Rem.WebApi;
-using Sentry;
 
 namespace Rem
 {
     class Program
     {
 #if DEBUG
-        private const string DefaultEnvironmentName = "Development";
+        private const string EnvironmentName = "Development";
 #else
-        private const string DefaultEnvironmentName = "Production";
+        private const string EnvironmentName = "Production";
 #endif
         static int Main(string[] args)
         {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNET_ENVIRONMENT") ??
-                                  Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
-                                  DefaultEnvironmentName;
+            var version = File.ReadAllText("VERSION.txt");
+            var configPath = Environment.GetEnvironmentVariable("REM_CONFIG_FILE");
+            var dbConnectionString = Environment.GetEnvironmentVariable("REM_DB_CONNECTION_STR");
 
-            string configPath;
-            string appsettingsPath;
-            string version = File.ReadAllText("VERSION.txt");
-
-            if (args.Length >= 2)
+            if (configPath == null)
             {
-                configPath = args[0];
-                appsettingsPath = args[1];
-            }
-            else
-            {
-                configPath = Environment.GetEnvironmentVariable("REM_CONFIG_FILE");
-                appsettingsPath = Environment.GetEnvironmentVariable("REM_APPSETTINGS_PATH");
-            }
-
-            if (configPath == null || appsettingsPath == null)
-            {
-                Console.Error.WriteLine("Config file path is required (either as args or as environment variables)");
+                Console.Error.WriteLine("Config file path is required (set REM_CONFIG_FILE)");
                 return 1;
             }
 
-            Console.WriteLine($"Using {configPath} for config file");
+            if (dbConnectionString == null)
+            {
+                Console.Error.WriteLine("Database connection string is required (set REM_DB_CONNECTION_STR)");
+                return 1;
+            }
 
             if (!File.Exists(configPath))
             {
-                Console.Error.WriteLine("Config file does not exist. One will be created. Please fill in the values.");
+                Console.Error.WriteLine($"Config file does not exist at {configPath}. One will be created. Please fill in the values.");
                 BotState.Initialize(version, configPath);
                 return 1;
             }
-            Console.WriteLine($"Running in {environmentName}");
-            Console.WriteLine($"Bot build version: {version}");
-            Console.WriteLine($"Loading appsettings from {appsettingsPath}");
 
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(Path.Join(appsettingsPath, "appsettings.json"), optional: false, reloadOnChange: true)
-                .AddJsonFile(Path.Join(appsettingsPath, $"appsettings.{environmentName}.json"), optional: true, reloadOnChange: true);
-            var configuration = builder.Build();
-            var connectionString = configuration.GetConnectionString("Database");
+            Console.WriteLine($"Running in {EnvironmentName}");
+            Console.WriteLine($"Bot build version: {version}");
+            Console.WriteLine($"Loading bot config from {configPath}");
 
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<BotContext>();
-            dbContextOptionsBuilder.UseSqlite(connectionString);
+            dbContextOptionsBuilder.UseSqlite(dbConnectionString);
 
             using (var dbContext = new BotContext(dbContextOptionsBuilder.Options))
             {
@@ -78,19 +54,11 @@ namespace Rem
 
             var source = new CancellationTokenSource();
 
-            var bot = new DiscordBot(version, configPath, connectionString);
+            var bot = new DiscordBot(version, configPath, dbConnectionString);
             var botTask = bot.Start();
-
-            //var webserverTask = CreateWebHostBuilder(args, configuration).Build().StartAsync(source.Token);
-            //Task.WaitAll(botTask, webserverTask, Task.Delay(-1, source.Token));
             Task.WaitAll(botTask, Task.Delay(-1, source.Token));
 
             return 0;
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IConfiguration configuration) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseConfiguration(configuration)
-                .UseStartup<Startup>();
     }
 }

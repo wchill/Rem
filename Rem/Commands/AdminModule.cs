@@ -82,5 +82,12 @@ namespace Rem.Commands
             await _botState.ReloadState();
             await ReplyAsync("Settings have been reloaded.");
         }
+
+        [RequireOwner]
+        [Command("echo"), Summary("Echo text")]
+        public async Task EchoText(string text)
+        {
+            await ReplyAsync(text);
+        }
     }
 }
