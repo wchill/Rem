@@ -114,6 +114,12 @@ namespace Rem.Bot
             var user = context.User as SocketGuildUser;
             if (user != null)
             {
+                // Other bots shouldn't be able to trigger commands
+                if (user.IsBot)
+                {
+                    return;
+                }
+
                 foreach (var role in user.Roles)
                 {
                     if (_state.BannedRoles.Contains(role.Name.ToLower()))
