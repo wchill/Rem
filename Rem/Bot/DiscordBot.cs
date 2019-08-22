@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -14,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Rem.Attributes;
 using Rem.Extensions;
 using Rem.Models;
-using Rem.Services;
 using Rem.Utilities;
 using Sentry;
 using Sentry.Protocol;
@@ -193,9 +190,6 @@ namespace Rem.Bot
 
         public async Task Start()
         {
-            var dbContext = (BotContext) _services.GetService(typeof(BotContext));
-            await dbContext.Database.MigrateAsync();
-
             await InstallCommands();
             await _client.LoginAsync(TokenType.Bot, _state.ClientSecret);
             await _client.StartAsync();
