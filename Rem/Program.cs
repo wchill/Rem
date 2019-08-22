@@ -44,14 +44,6 @@ namespace Rem
             Console.WriteLine($"Bot build version: {version}");
             Console.WriteLine($"Loading bot config from {configPath}");
 
-            var dbContextOptionsBuilder = new DbContextOptionsBuilder<BotContext>();
-            dbContextOptionsBuilder.UseSqlite(dbConnectionString);
-
-            using (var dbContext = new BotContext(dbContextOptionsBuilder.Options))
-            {
-                dbContext.Database.Migrate();
-            }
-
             var source = new CancellationTokenSource();
 
             var bot = new DiscordBot(version, configPath, dbConnectionString);

@@ -28,11 +28,8 @@ namespace Rem.Bot
         private readonly BotState _state;
         private IServiceProvider _services;
 
-        private readonly string _dbConnectionString;
-
         public DiscordBot(string version, string configPath, string dbConnectionString)
         {
-            _dbConnectionString = dbConnectionString;
             _state = BotState.Initialize(version, configPath);
             SentrySdk.Init(new SentryOptions
             {
@@ -47,7 +44,17 @@ namespace Rem.Bot
 
             _commands = new CommandService();
             _commands.Log += Log;
-            _services = null;
+
+
+            var types = Assembly.GetExecutingAssembly().FindTypesWithAttribute<ServiceAttribute>().ToImmutableArray();
+            _services = new ServiceCollection()
+                .AddSingleton(_client)
+                .AddSingleton(_commands)
+                .AddSingleton(_state)
+                .AddSingleton(MemeLoader.LoadAllTemplates())
+                .AddServices(types)
+                .AddDbContextPool<BotContext>(options => { options.UseSqlite(dbConnectionString); })
+                .BuildServiceProvider();
         }
 
         private async Task OnClientReady()
@@ -76,20 +83,6 @@ namespace Rem.Bot
         {
             Console.WriteLine(msg);
             return Task.CompletedTask;
-        }
-
-        private async Task InstallServices()
-        {
-            var types = Assembly.GetExecutingAssembly().FindTypesWithAttribute<ServiceAttribute>().ToImmutableArray();
-
-            _services = new ServiceCollection()
-                .AddSingleton(_client)
-                .AddSingleton(_commands)
-                .AddSingleton(_state)
-                .AddSingleton(MemeLoader.LoadAllTemplates())
-                .AddServices(types)
-                .AddDbContextPool<BotContext>(options => { options.UseSqlite(_dbConnectionString); })
-                .BuildServiceProvider();
         }
 
         private async Task InstallCommands()
@@ -200,7 +193,9 @@ namespace Rem.Bot
 
         public async Task Start()
         {
-            await InstallServices();
+            var dbContext = (BotContext) _services.GetService(typeof(BotContext));
+            await dbContext.Database.MigrateAsync();
+
             await InstallCommands();
             await _client.LoginAsync(TokenType.Bot, _state.ClientSecret);
             await _client.StartAsync();
