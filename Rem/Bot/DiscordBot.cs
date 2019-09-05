@@ -101,8 +101,7 @@ namespace Rem.Bot
             var context = new CommandContext(_client, message);
 
             // TODO: This only handles messages from servers, not DMs. Need to implement support for DMs.
-            var user = context.User as SocketGuildUser;
-            if (user != null)
+            if (context.User is SocketGuildUser user)
             {
                 // Other bots shouldn't be able to trigger commands
                 if (user.IsBot)
@@ -123,65 +122,67 @@ namespace Rem.Bot
             {
                 return;
             }
-            
-            SentrySdk.WithScope(async scope =>
+            SentrySdk.WithScope(async sentryScope =>
             {
-                scope.User = new User
+                sentryScope.User = new User
                 {
                     Id = user.Id.ToString(),
                     Username = $"{user.Username}#{user.DiscriminatorValue}"
                 };
-                scope.SetExtra("command", message.Content);
-                scope.SetExtra("message_channel", $"#{message.Channel.Name} ({message.Channel.Id})");
+                sentryScope.SetExtra("command", message.Content);
+                sentryScope.SetExtra("message_channel", $"#{message.Channel.Name} ({message.Channel.Id})");
 
                 // Execute the command. (result does not indicate a return value, 
                 // rather an object stating if the command executed successfully)
-                var result = await _commands.ExecuteAsync(context, argPos, _services);
-                if (result.IsSuccess) return;
+                using (var serviceScope = _services.CreateScope())
+                {
+                    var result = await _commands.ExecuteAsync(context, argPos, _services);
+                    if (result.IsSuccess) return;
 
-                switch (result.Error)
-                {
-                    case CommandError.Exception:
-                        if (result is ExecuteResult execResult)
-                        {
-                            await Console.Error.WriteLineAsync($"Error encountered when handling command {message}:");
-                            await Console.Error.WriteLineAsync(execResult.Exception.ToString());
-                            SentrySdk.CaptureException(execResult.Exception);
-                        }
-                        break;
-                    case CommandError.UnknownCommand:
-                        break;
-                    case CommandError.ParseFailed:
-                        await context.Channel.SendMessageAsync(result.ErrorReason);
-                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
-                        break;
-                    case CommandError.BadArgCount:
-                        await context.Channel.SendMessageAsync(result.ErrorReason);
-                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
-                        break;
-                    case CommandError.ObjectNotFound:
-                        await context.Channel.SendMessageAsync(result.ErrorReason);
-                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
-                        break;
-                    case CommandError.MultipleMatches:
-                        await context.Channel.SendMessageAsync(result.ErrorReason);
-                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
-                        break;
-                    case CommandError.UnmetPrecondition:
-                        await context.Channel.SendMessageAsync($"<@{message.Author.Id}>: {result.ErrorReason}");
-                        break;
-                    case CommandError.Unsuccessful:
-                        await context.Channel.SendMessageAsync(result.ErrorReason);
-                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
-                        break;
-                    default:
-                        await Console.Error.WriteLineAsync($"Unknown result type: {result.Error}");
-                        await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
-                        break;
-                }
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
+                    switch (result.Error)
+                    {
+                        case CommandError.Exception:
+                            if (result is ExecuteResult execResult)
+                            {
+                                await Console.Error.WriteLineAsync($"Error encountered when handling command {message}:");
+                                await Console.Error.WriteLineAsync(execResult.Exception.ToString());
+                                SentrySdk.CaptureException(execResult.Exception);
+                            }
+                            break;
+                        case CommandError.UnknownCommand:
+                            break;
+                        case CommandError.ParseFailed:
+                            await context.Channel.SendMessageAsync(result.ErrorReason);
+                            await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
+                            break;
+                        case CommandError.BadArgCount:
+                            await context.Channel.SendMessageAsync(result.ErrorReason);
+                            await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
+                            break;
+                        case CommandError.ObjectNotFound:
+                            await context.Channel.SendMessageAsync(result.ErrorReason);
+                            await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
+                            break;
+                        case CommandError.MultipleMatches:
+                            await context.Channel.SendMessageAsync(result.ErrorReason);
+                            await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
+                            break;
+                        case CommandError.UnmetPrecondition:
+                            await context.Channel.SendMessageAsync($"<@{message.Author.Id}>: {result.ErrorReason}");
+                            break;
+                        case CommandError.Unsuccessful:
+                            await context.Channel.SendMessageAsync(result.ErrorReason);
+                            await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
+                            break;
+                        default:
+                            await Console.Error.WriteLineAsync($"Unknown result type: {result.Error}");
+                            await Console.Error.WriteLineAsync($"Error: {result.ErrorReason}");
+                            break;
+                    }
+                    if (Debugger.IsAttached)
+                    {
+                        Debugger.Break();
+                    }
                 }
             });
 
