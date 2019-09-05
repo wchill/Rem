@@ -136,7 +136,7 @@ namespace Rem.Bot
                 // rather an object stating if the command executed successfully)
                 using (var serviceScope = _services.CreateScope())
                 {
-                    var result = await _commands.ExecuteAsync(context, argPos, _services);
+                    var result = await _commands.ExecuteAsync(context, argPos, serviceScope.ServiceProvider);
                     if (result.IsSuccess) return;
 
                     switch (result.Error)
